@@ -164,14 +164,70 @@ async function init() {
   elbow.rotation.z = POSE.elbow;
   wrist.rotation.z = POSE.wrist;
 
-  // ---------- Cadrage : socle posé au sol, bras décalé à droite ----------
+  // ===========================================================
+  // Élément gauche : réseau de neurones qui pulse (versant IA)
+  // Réseau en couches (entrée -> cachées -> sortie), nœuds qui
+  // s'allument par vagues, connexions orange discrètes.
+  // ===========================================================
+  const netRoot = new THREE.Group();
+  scene.add(netRoot);
+
+  const LAYERS = [3, 4, 4, 2];   // nb de nœuds par couche
+  const LAYER_GAP = 1.5;         // espacement horizontal des couches
+  const NODE_GAP = 1.2;          // espacement vertical des nœuds
+
+  const nodeGeo = new THREE.SphereGeometry(0.16, 16, 16);
+  const nodes = []; // { mesh, layer }
+  const layerNodes = [];
+
+  LAYERS.forEach((count, li) => {
+    const x = (li - (LAYERS.length - 1) / 2) * LAYER_GAP;
+    const col = [];
+    for (let i = 0; i < count; i++) {
+      const y = (i - (count - 1) / 2) * NODE_GAP;
+      // matériau propre à chaque nœud (emissive animée individuellement)
+      const mat = new THREE.MeshStandardMaterial({
+        color: COL_BODY, emissive: COL_ACCENT, emissiveIntensity: 0.2,
+        metalness: 0.3, roughness: 0.5
+      });
+      const mesh = new THREE.Mesh(nodeGeo, mat);
+      mesh.position.set(x, y, (Math.random() - 0.5) * 0.6);
+      netRoot.add(mesh);
+      const node = { mesh, layer: li };
+      nodes.push(node);
+      col.push(node);
+    }
+    layerNodes.push(col);
+  });
+
+  // connexions entre couches adjacentes
+  const edgePts = [];
+  for (let li = 0; li < layerNodes.length - 1; li++) {
+    layerNodes[li].forEach((a) => {
+      layerNodes[li + 1].forEach((b) => {
+        edgePts.push(a.mesh.position, b.mesh.position);
+      });
+    });
+  }
+  const edgeGeo = new THREE.BufferGeometry().setFromPoints(edgePts);
+  const edgeMat = new THREE.LineBasicMaterial({
+    color: COL_ACCENT, transparent: true, opacity: 0.18
+  });
+  const edges = new THREE.LineSegments(edgeGeo, edgeMat);
+  netRoot.add(edges);
+
+  // ---------- Cadrage : bras à droite, réseau à gauche ----------
   function layoutForViewport() {
     const aspect = mount.clientWidth / mount.clientHeight;
-    root.position.x = aspect > 1.4 ? 3.8 : 2.4;
-    root.scale.setScalar(aspect > 1.4 ? 0.8 : 0.64);
+    const wide = aspect > 1.4;
+    root.position.x = wide ? 3.8 : 2.4;
+    root.scale.setScalar(wide ? 0.8 : 0.64);
+    netRoot.position.x = wide ? -3.9 : -2.5;
+    netRoot.scale.setScalar(wide ? 0.85 : 0.6);
   }
   root.rotation.z = 0;
   root.position.y = 0.3;
+  netRoot.position.y = 0.4;
   layoutForViewport();
 
   // ---------- Micro-animation : pose stable + respiration discrète ----------
@@ -197,9 +253,19 @@ async function init() {
     // respiration de la lumière d'accent
     accentLight.intensity = 16 + Math.sin(t * 1.3) * 5;
 
-    // parallaxe au scroll : le bras pivote et glisse légèrement
+    // réseau de neurones : vague d'activation qui traverse les couches
+    nodes.forEach((n) => {
+      const wave = Math.sin(t * 1.6 - n.layer * 0.9);
+      n.mesh.material.emissiveIntensity = 0.15 + (wave * 0.5 + 0.5) * 0.95;
+    });
+    edges.material.opacity = 0.14 + (Math.sin(t * 1.6) * 0.5 + 0.5) * 0.12;
+    // léger flottement 3D
+    netRoot.rotation.y = Math.sin(t * 0.25) * 0.35;
+
+    // parallaxe au scroll : les deux éléments glissent légèrement
     root.rotation.y = scrollT * 0.4;
     root.position.y = 0.3 - scrollT * 1.2;
+    netRoot.position.y = 0.4 - scrollT * 1.0;
 
     renderer.render(scene, camera);
   }
