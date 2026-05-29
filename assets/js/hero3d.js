@@ -183,13 +183,17 @@ async function init() {
   });
   // matériau additif pour les filaments (donne le côté "réseau neuronal")
   const filamentMat = new THREE.LineBasicMaterial({
-    color: COL_ACCENT, transparent: true, opacity: 0.32, blending: THREE.AdditiveBlending
+    color: COL_ACCENT, transparent: true, opacity: 0.28, blending: THREE.AdditiveBlending
   });
-  function makeLobe(seed) {
-    const g = new THREE.IcosahedronGeometry(1.05, 4);
+  // halo de contour (fresnel simulé) : coque BackSide qui glow sur la silhouette
+  const haloMat = new THREE.MeshBasicMaterial({
+    color: COL_ACCENT, transparent: true, opacity: 0.12,
+    side: THREE.BackSide, blending: THREE.AdditiveBlending
+  });
+  // déformation douce partagée -> même galbe pour solide / halo / filaments
+  function deform(g, seed) {
     const p = g.attributes.position;
     const v = new THREE.Vector3();
-    // déformation douce -> galbe organique sans "patate"
     for (let i = 0; i < p.count; i++) {
       v.fromBufferAttribute(p, i);
       const n =
@@ -200,11 +204,21 @@ async function init() {
       p.setXYZ(i, v.x, v.y, v.z);
     }
     g.computeVertexNormals();
-    const solid = new THREE.Mesh(g, brainMat);
-    // filaments : arêtes lumineuses en surface
-    const wire = new THREE.LineSegments(new THREE.WireframeGeometry(g), filamentMat);
+    return g;
+  }
+  function makeLobe(seed) {
     const lobe = new THREE.Group();
-    lobe.add(solid, wire);
+    // volume lisse
+    const gSolid = deform(new THREE.IcosahedronGeometry(1.05, 4), seed);
+    lobe.add(new THREE.Mesh(gSolid, brainMat));
+    // halo de contour légèrement plus grand
+    const gHalo = deform(new THREE.IcosahedronGeometry(1.05, 3), seed);
+    const halo = new THREE.Mesh(gHalo, haloMat);
+    halo.scale.setScalar(1.07);
+    lobe.add(halo);
+    // filaments épars et propres (subdivision basse -> grandes facettes élégantes)
+    const gWire = deform(new THREE.IcosahedronGeometry(1.05, 2), seed);
+    lobe.add(new THREE.LineSegments(new THREE.WireframeGeometry(gWire), filamentMat));
     return lobe;
   }
   const brain = new THREE.Group();
@@ -238,6 +252,15 @@ async function init() {
   );
   chipTop.position.z = 0.13;
   chip.add(chipTop);
+
+  // petits composants CMS sur le dessus (détail de réalisme)
+  const smdMat = new THREE.MeshStandardMaterial({ color: 0x2a2a33, metalness: 0.5, roughness: 0.5 });
+  const smdPos = [[-0.5, 0.5], [0.5, -0.5], [-0.52, -0.42], [0.48, 0.5]];
+  smdPos.forEach(([sx, sy]) => {
+    const smd = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.09, 0.05), smdMat);
+    smd.position.set(sx, sy, 0.16);
+    chip.add(smd);
+  });
 
   // cavité sombre encastrée (le die est en retrait dedans)
   const chipRecess = new THREE.Mesh(
@@ -323,8 +346,8 @@ async function init() {
     const wide = aspect > 1.4;
     root.position.x = wide ? 3.8 : 2.4;
     root.scale.setScalar(wide ? 0.8 : 0.64);
-    netRoot.position.x = wide ? -3.9 : -2.5;
-    netRoot.scale.setScalar(wide ? 0.95 : 0.66);
+    netRoot.position.x = wide ? -4.7 : -2.9;
+    netRoot.scale.setScalar(wide ? 0.95 : 0.62);
   }
   root.rotation.z = 0;
   root.position.y = 0.3;
