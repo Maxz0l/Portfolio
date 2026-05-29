@@ -100,25 +100,7 @@ async function init() {
   const root = new THREE.Group();
   scene.add(root);
 
-  // --- sol : disque sur lequel repose le socle (ancre le robot) ---
-  const FLOOR_Y = -3.075; // dessous du socle
-  const floor = new THREE.Mesh(
-    new THREE.CircleGeometry(3.0, 48),
-    new THREE.MeshStandardMaterial({ color: 0x0d0d15, metalness: 0.2, roughness: 0.9, transparent: true, opacity: 0.85 })
-  );
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.y = FLOOR_Y;
-  root.add(floor);
-  // liseré orange discret au bord du sol
-  const floorRing = new THREE.Mesh(
-    new THREE.RingGeometry(2.85, 3.0, 48),
-    new THREE.MeshStandardMaterial({ color: COL_ACCENT, emissive: COL_ACCENT, emissiveIntensity: 0.4, transparent: true, opacity: 0.5 })
-  );
-  floorRing.rotation.x = -Math.PI / 2;
-  floorRing.position.y = FLOOR_Y + 0.01;
-  root.add(floorRing);
-
-  // --- socle au sol (large, stable), posé sur le disque ---
+  // --- socle au sol (large, stable) ---
   const foot = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.35, 0.35, 36), matDark);
   foot.position.y = -2.9;
   root.add(foot);
@@ -185,11 +167,11 @@ async function init() {
   // ---------- Cadrage : socle posé au sol, bras décalé à droite ----------
   function layoutForViewport() {
     const aspect = mount.clientWidth / mount.clientHeight;
-    root.position.x = aspect > 1.4 ? 3.5 : 2.2;
+    root.position.x = aspect > 1.4 ? 3.8 : 2.4;
     root.scale.setScalar(aspect > 1.4 ? 0.8 : 0.64);
   }
-  root.rotation.z = 0;        // base à plat, alignée avec le sol
-  root.position.y = -0.5;     // remonté : robot plus présent, mais posé sur son sol
+  root.rotation.z = 0;
+  root.position.y = 0.3;
   layoutForViewport();
 
   // ---------- Micro-animation : pose stable + respiration discrète ----------
@@ -217,7 +199,7 @@ async function init() {
 
     // parallaxe au scroll : le bras pivote et glisse légèrement
     root.rotation.y = scrollT * 0.4;
-    root.position.y = -0.5 - scrollT * 1.2;
+    root.position.y = 0.3 - scrollT * 1.2;
 
     renderer.render(scene, camera);
   }
