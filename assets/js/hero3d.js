@@ -176,66 +176,14 @@ async function init() {
   const netRoot = new THREE.Group();
   scene.add(netRoot);
 
-  // --- cerveau : deux hémisphères lisses + filaments neuronaux lumineux ---
-  const brainMat = new THREE.MeshStandardMaterial({
-    color: 0x120f18, emissive: COL_ACCENT, emissiveIntensity: 0.05,
-    metalness: 0.1, roughness: 0.95, transparent: true, opacity: 0.55
-  });
-  // matériau additif pour les filaments (donne le côté "réseau neuronal")
-  const filamentMat = new THREE.LineBasicMaterial({
-    color: COL_ACCENT, transparent: true, opacity: 0.28, blending: THREE.AdditiveBlending
-  });
-  // halo de contour (fresnel simulé) : coque BackSide qui glow sur la silhouette
-  const haloMat = new THREE.MeshBasicMaterial({
-    color: COL_ACCENT, transparent: true, opacity: 0.12,
-    side: THREE.BackSide, blending: THREE.AdditiveBlending
-  });
-  // déformation douce partagée -> même galbe pour solide / halo / filaments
-  function deform(g, seed) {
-    const p = g.attributes.position;
-    const v = new THREE.Vector3();
-    for (let i = 0; i < p.count; i++) {
-      v.fromBufferAttribute(p, i);
-      const n =
-        Math.sin(v.x * 3.1 + seed) * Math.cos(v.y * 2.7) +
-        Math.sin(v.y * 3.4 + 1.3) * Math.cos(v.z * 3.0) +
-        Math.sin(v.z * 2.8 + 2.1) * Math.cos(v.x * 3.3);
-      v.multiplyScalar(1 + n * 0.028);
-      p.setXYZ(i, v.x, v.y, v.z);
-    }
-    g.computeVertexNormals();
-    return g;
-  }
-  function makeLobe(seed) {
-    const lobe = new THREE.Group();
-    // volume lisse
-    const gSolid = deform(new THREE.IcosahedronGeometry(1.05, 4), seed);
-    lobe.add(new THREE.Mesh(gSolid, brainMat));
-    // halo de contour légèrement plus grand
-    const gHalo = deform(new THREE.IcosahedronGeometry(1.05, 3), seed);
-    const halo = new THREE.Mesh(gHalo, haloMat);
-    halo.scale.setScalar(1.07);
-    lobe.add(halo);
-    // filaments épars et propres (subdivision basse -> grandes facettes élégantes)
-    const gWire = deform(new THREE.IcosahedronGeometry(1.05, 2), seed);
-    lobe.add(new THREE.LineSegments(new THREE.WireframeGeometry(gWire), filamentMat));
-    return lobe;
-  }
-  const brain = new THREE.Group();
-  const lobeL = makeLobe(0.0); lobeL.position.x = -0.5; lobeL.scale.set(0.9, 1.1, 1.2);
-  const lobeR = makeLobe(2.5); lobeR.position.x = 0.5; lobeR.scale.set(0.9, 1.1, 1.2);
-  brain.add(lobeL, lobeR);
-  brain.position.z = -0.9; // en retrait, derrière la puce
-  netRoot.add(brain);
+  // halo orange diffus derrière la puce (donne du volume à l'ensemble)
+  const chipGlow = new THREE.PointLight(COL_ACCENT, 6, 9, 2);
+  chipGlow.position.set(0, 0, -1.2);
+  netRoot.add(chipGlow);
 
-  // halo orange diffus derrière le cerveau
-  const brainGlow = new THREE.PointLight(COL_ACCENT, 6, 9, 2);
-  brainGlow.position.set(0, 0, -1.8);
-  netRoot.add(brainGlow);
-
-  // --- puce électronique posée par-dessus (légèrement basculée) ---
+  // --- puce électronique (légèrement basculée) ---
   const chip = new THREE.Group();
-  chip.position.set(0, -0.2, 0.9); // centré sur la masse du cerveau
+  chip.position.set(0, 0, 0); // seule entité du bloc gauche -> centrée
   chip.rotation.x = -0.35; // basculement 3D -> perspective, moins "plat"
   chip.rotation.z = 0.12;
   netRoot.add(chip);
@@ -346,8 +294,8 @@ async function init() {
     const wide = aspect > 1.4;
     root.position.x = wide ? 3.8 : 2.4;
     root.scale.setScalar(wide ? 0.8 : 0.64);
-    netRoot.position.x = wide ? -4.7 : -2.9;
-    netRoot.scale.setScalar(wide ? 0.95 : 0.62);
+    netRoot.position.x = wide ? -4.3 : -2.7;
+    netRoot.scale.setScalar(wide ? 1.05 : 0.7);
   }
   root.rotation.z = 0;
   root.position.y = 0.3;
@@ -377,14 +325,12 @@ async function init() {
     // respiration de la lumière d'accent
     accentLight.intensity = 16 + Math.sin(t * 1.3) * 5;
 
-    // cerveau + puce : pulsation orange (battement)
+    // puce : pulsation orange (battement)
     const pulse = Math.sin(t * 1.8) * 0.5 + 0.5; // 0..1
     chipCore.material.emissiveIntensity = 0.7 + pulse * 1.8;
     traces.material.opacity = 0.22 + pulse * 0.4;
     padMat.emissiveIntensity = 0.4 + pulse * 0.9;
-    filamentMat.opacity = 0.18 + pulse * 0.3;
-    brainGlow.intensity = 4 + pulse * 7;
-    brainMat.emissiveIntensity = 0.04 + pulse * 0.1;
+    chipGlow.intensity = 4 + pulse * 7;
     // léger flottement 3D de l'ensemble
     netRoot.rotation.y = Math.sin(t * 0.25) * 0.22;
 
