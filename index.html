@@ -40,6 +40,7 @@
 
 <header class="hero">
   <div class="hero-glow"></div>
+  <div class="hero-3d" id="hero3d" aria-hidden="true"></div>
   <div class="hero-inner">
     <div class="hero-photo">
       <span class="ph">[ photo ]</span>
@@ -245,5 +246,9 @@
 </footer>
 
 <script src="assets/js/main.js"></script>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module" src="assets/js/hero3d.js"></script>
 </body>
 </html>
