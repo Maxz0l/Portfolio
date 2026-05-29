@@ -8,3 +8,8 @@ Thumbs.db
 
 # Temporaires
 *.log
+
+# Puppeteer (screenshots locaux uniquement)
+node_modules/
+package.json
+package-lock.json
