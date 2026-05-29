@@ -60,6 +60,11 @@ async function init() {
   accentLight.position.set(2.5, 1.5, 3);
   scene.add(accentLight);
 
+  // rim light dédié au bloc gauche (ciselle les arêtes de la puce)
+  const chipRim = new THREE.DirectionalLight(0xfff2e0, 1.2);
+  chipRim.position.set(-6, 3, 4);
+  scene.add(chipRim);
+
   const rim = new THREE.DirectionalLight(COL_ACCENT, 0.6);
   rim.position.set(5, -2, -4);
   scene.add(rim);
@@ -171,93 +176,146 @@ async function init() {
   const netRoot = new THREE.Group();
   scene.add(netRoot);
 
-  // --- cerveau : masse organique bosselée, deux lobes, en retrait ---
+  // --- cerveau : deux hémisphères lisses + filaments neuronaux lumineux ---
   const brainMat = new THREE.MeshStandardMaterial({
-    color: 0x15131c, emissive: COL_ACCENT, emissiveIntensity: 0.06,
-    metalness: 0.2, roughness: 0.85, transparent: true, opacity: 0.9
+    color: 0x120f18, emissive: COL_ACCENT, emissiveIntensity: 0.05,
+    metalness: 0.1, roughness: 0.95, transparent: true, opacity: 0.55
   });
-  function makeLobe() {
-    const g = new THREE.IcosahedronGeometry(1.1, 3);
+  // matériau additif pour les filaments (donne le côté "réseau neuronal")
+  const filamentMat = new THREE.LineBasicMaterial({
+    color: COL_ACCENT, transparent: true, opacity: 0.32, blending: THREE.AdditiveBlending
+  });
+  function makeLobe(seed) {
+    const g = new THREE.IcosahedronGeometry(1.05, 4);
     const p = g.attributes.position;
     const v = new THREE.Vector3();
-    // déformation pseudo-bruit -> surface "circonvolutions"
+    // déformation douce -> galbe organique sans "patate"
     for (let i = 0; i < p.count; i++) {
       v.fromBufferAttribute(p, i);
       const n =
-        Math.sin(v.x * 4.2) * Math.cos(v.y * 3.7) +
-        Math.sin(v.y * 5.1 + 1.3) * Math.cos(v.z * 4.4) +
-        Math.sin(v.z * 3.9 + 2.1) * Math.cos(v.x * 4.8);
-      v.multiplyScalar(1 + n * 0.06);
+        Math.sin(v.x * 3.1 + seed) * Math.cos(v.y * 2.7) +
+        Math.sin(v.y * 3.4 + 1.3) * Math.cos(v.z * 3.0) +
+        Math.sin(v.z * 2.8 + 2.1) * Math.cos(v.x * 3.3);
+      v.multiplyScalar(1 + n * 0.028);
       p.setXYZ(i, v.x, v.y, v.z);
     }
     g.computeVertexNormals();
-    return new THREE.Mesh(g, brainMat);
+    const solid = new THREE.Mesh(g, brainMat);
+    // filaments : arêtes lumineuses en surface
+    const wire = new THREE.LineSegments(new THREE.WireframeGeometry(g), filamentMat);
+    const lobe = new THREE.Group();
+    lobe.add(solid, wire);
+    return lobe;
   }
   const brain = new THREE.Group();
-  const lobeL = makeLobe(); lobeL.position.x = -0.55; lobeL.scale.set(0.95, 1.05, 1.15);
-  const lobeR = makeLobe(); lobeR.position.x = 0.55; lobeR.scale.set(0.95, 1.05, 1.15);
+  const lobeL = makeLobe(0.0); lobeL.position.x = -0.5; lobeL.scale.set(0.9, 1.1, 1.2);
+  const lobeR = makeLobe(2.5); lobeR.position.x = 0.5; lobeR.scale.set(0.9, 1.1, 1.2);
   brain.add(lobeL, lobeR);
-  brain.position.z = -0.8; // en retrait, derrière la puce
+  brain.position.z = -0.9; // en retrait, derrière la puce
   netRoot.add(brain);
 
   // halo orange diffus derrière le cerveau
   const brainGlow = new THREE.PointLight(COL_ACCENT, 6, 9, 2);
-  brainGlow.position.set(0, 0, -1.6);
+  brainGlow.position.set(0, 0, -1.8);
   netRoot.add(brainGlow);
 
-  // --- puce électronique posée par-dessus ---
+  // --- puce électronique posée par-dessus (légèrement basculée) ---
   const chip = new THREE.Group();
   chip.position.z = 0.9;
+  chip.rotation.x = -0.35; // basculement 3D -> perspective, moins "plat"
+  chip.rotation.z = 0.12;
   netRoot.add(chip);
 
+  // boîtier biseauté (chanfrein via 2e box plus fine au-dessus)
   const chipBody = new THREE.Mesh(
-    new THREE.BoxGeometry(1.5, 1.5, 0.28),
-    new THREE.MeshStandardMaterial({ color: 0x0e0e16, metalness: 0.6, roughness: 0.4 })
+    new THREE.BoxGeometry(1.5, 1.5, 0.22),
+    new THREE.MeshStandardMaterial({ color: 0x0c0c14, metalness: 0.7, roughness: 0.35 })
   );
   chip.add(chipBody);
-
-  // marque centrale lumineuse (le "cœur" qui pulse)
-  const chipCore = new THREE.Mesh(
-    new THREE.BoxGeometry(0.7, 0.7, 0.06),
-    new THREE.MeshStandardMaterial({ color: COL_ACCENT, emissive: COL_ACCENT, emissiveIntensity: 1.0 })
+  const chipTop = new THREE.Mesh(
+    new THREE.BoxGeometry(1.32, 1.32, 0.06),
+    new THREE.MeshStandardMaterial({ color: 0x16161f, metalness: 0.6, roughness: 0.4 })
   );
-  chipCore.position.z = 0.16;
+  chipTop.position.z = 0.13;
+  chip.add(chipTop);
+
+  // cavité sombre encastrée (le die est en retrait dedans)
+  const chipRecess = new THREE.Mesh(
+    new THREE.BoxGeometry(0.78, 0.78, 0.05),
+    new THREE.MeshStandardMaterial({ color: 0x060608, metalness: 0.5, roughness: 0.6 })
+  );
+  chipRecess.position.z = 0.15;
+  chip.add(chipRecess);
+
+  // die lumineux, plus petit, au fond de la cavité (le "cœur" qui pulse)
+  const chipCore = new THREE.Mesh(
+    new THREE.BoxGeometry(0.52, 0.52, 0.04),
+    new THREE.MeshStandardMaterial({ color: COL_ACCENT, emissive: COL_ACCENT, emissiveIntensity: 1.2 })
+  );
+  chipCore.position.z = 0.17;
   chip.add(chipCore);
+  // fines rainures sombres sur le die (motif "silicium")
+  const dieLines = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.PlaneGeometry(0.52, 0.52, 4, 4)),
+    new THREE.LineBasicMaterial({ color: 0x3a2a10, transparent: true, opacity: 0.5 })
+  );
+  dieLines.position.z = 0.2;
+  chip.add(dieLines);
 
   // pattes métalliques sur les 4 côtés
-  const pinMat = new THREE.MeshStandardMaterial({ color: 0x6a6a72, metalness: 0.9, roughness: 0.3 });
-  const pinGeo = new THREE.BoxGeometry(0.32, 0.08, 0.08);
-  const PINS = 5, span = 1.05;
+  const pinMat = new THREE.MeshStandardMaterial({ color: 0x7a7a82, metalness: 0.95, roughness: 0.25 });
+  const pinGeo = new THREE.BoxGeometry(0.3, 0.07, 0.07);
+  const PINS = 6, span = 1.1;
   for (let i = 0; i < PINS; i++) {
-    const off = (i - (PINS - 1) / 2) * (span / (PINS - 1)) * 2 * 0.5;
-    // gauche / droite
-    [[-1, 0], [1, 0]].forEach(([sx]) => {
+    const off = (i - (PINS - 1) / 2) * (span / (PINS - 1));
+    [[-1], [1]].forEach(([sx]) => {
       const pin = new THREE.Mesh(pinGeo, pinMat);
-      pin.position.set(sx * 0.9, off, 0);
+      pin.position.set(sx * 0.88, off, 0);
       chip.add(pin);
     });
-    // haut / bas (pattes tournées 90°)
-    [[0, -1], [0, 1]].forEach(([, sy]) => {
+    [[-1], [1]].forEach(([sy]) => {
       const pin = new THREE.Mesh(pinGeo, pinMat);
       pin.rotation.z = Math.PI / 2;
-      pin.position.set(off, sy * 0.9, 0);
+      pin.position.set(off, sy * 0.88, 0);
       chip.add(pin);
     });
   }
 
-  // pistes de circuit orange (lignes rayonnant depuis la puce)
+  // pistes de circuit orange en angles droits + pads (vrai routage PCB)
   const tracePts = [];
-  for (let i = 0; i < 14; i++) {
-    const a = (i / 14) * Math.PI * 2;
-    const r0 = 0.85, r1 = 1.7 + (i % 3) * 0.4;
-    tracePts.push(
-      new THREE.Vector3(Math.cos(a) * r0, Math.sin(a) * r0, 0.1),
-      new THREE.Vector3(Math.cos(a) * r1, Math.sin(a) * r1, 0.1)
-    );
+  const padList = [];
+  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  for (let k = 0; k < 12; k++) {
+    const d = dirs[k % 4];
+    const perp = [-d[1], d[0]];
+    const lane = ((k >> 2) - 1) * 0.42;       // décalage latéral par voie
+    const start = 0.95, mid = 1.35 + (k % 3) * 0.25, turn = lane;
+    const ax = d[0] * start + perp[0] * lane;
+    const ay = d[1] * start + perp[1] * lane;
+    const bx = d[0] * mid + perp[0] * lane;
+    const by = d[1] * mid + perp[1] * lane;
+    const cx = d[0] * mid + perp[0] * (lane + turn * 0 + (perp[0] || perp[1]) * 0); // segment coudé
+    // coude : du point B, on tourne le long de la perpendiculaire
+    const ex = bx + perp[0] * 0.45, ey = by + perp[1] * 0.45;
+    tracePts.push(new THREE.Vector3(ax, ay, 0.05), new THREE.Vector3(bx, by, 0.05));
+    tracePts.push(new THREE.Vector3(bx, by, 0.05), new THREE.Vector3(ex, ey, 0.05));
+    padList.push([ex, ey]);
   }
-  const traceMat = new THREE.LineBasicMaterial({ color: COL_ACCENT, transparent: true, opacity: 0.3 });
+  const traceMat = new THREE.LineBasicMaterial({
+    color: COL_ACCENT, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending
+  });
   const traces = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(tracePts), traceMat);
   chip.add(traces);
+  // pads carrés en bout de piste
+  const padGeo = new THREE.PlaneGeometry(0.1, 0.1);
+  const padMat = new THREE.MeshStandardMaterial({
+    color: COL_ACCENT, emissive: COL_ACCENT, emissiveIntensity: 0.7, transparent: true, opacity: 0.7
+  });
+  padList.forEach(([px, py]) => {
+    const pad = new THREE.Mesh(padGeo, padMat);
+    pad.position.set(px, py, 0.05);
+    chip.add(pad);
+  });
 
   // ---------- Cadrage : bras à droite, cerveau+puce à gauche ----------
   function layoutForViewport() {
@@ -298,13 +356,14 @@ async function init() {
 
     // cerveau + puce : pulsation orange (battement)
     const pulse = Math.sin(t * 1.8) * 0.5 + 0.5; // 0..1
-    chipCore.material.emissiveIntensity = 0.5 + pulse * 1.6;
-    traces.material.opacity = 0.18 + pulse * 0.32;
+    chipCore.material.emissiveIntensity = 0.7 + pulse * 1.8;
+    traces.material.opacity = 0.22 + pulse * 0.4;
+    padMat.emissiveIntensity = 0.4 + pulse * 0.9;
+    filamentMat.opacity = 0.18 + pulse * 0.3;
     brainGlow.intensity = 4 + pulse * 7;
-    brainMat.emissiveIntensity = 0.04 + pulse * 0.12;
+    brainMat.emissiveIntensity = 0.04 + pulse * 0.1;
     // léger flottement 3D de l'ensemble
-    netRoot.rotation.y = Math.sin(t * 0.25) * 0.28;
-    chip.rotation.z = Math.sin(t * 0.4) * 0.05;
+    netRoot.rotation.y = Math.sin(t * 0.25) * 0.22;
 
     // parallaxe au scroll : les deux éléments glissent légèrement
     root.rotation.y = scrollT * 0.4;
