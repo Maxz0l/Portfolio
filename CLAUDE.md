@@ -22,15 +22,19 @@ Objectif du site : convaincre un recruteur (labo, startup ou grand groupe indust
 ├── projets.html        # Détail des 3 projets
 ├── experiences.html    # Timeline parcours (RATP, Padoue, CPE)
 └── assets/
-    ├── css/style.css   # TOUT le design system + styles partagés (fichier unique)
-    ├── js/main.js      # JS partagé (nav, scroll, reveal) — fichier unique
-    └── img/            # Images (photos projets, photo perso, modèle 3D à venir)
+    ├── css/style.css        # TOUT le design system + styles partagés (fichier unique)
+    ├── js/main.js           # JS partagé 3 pages (nav, scroll, reveal)
+    ├── js/hero3d.js         # Module ES, accueil uniquement : bras robotique 3D (Three.js)
+    ├── vendor/three.module.js # Three.js hébergé en local (pas de CDN)
+    └── img/                 # Images (favicon, og-image, photos projets, photo perso à venir)
 ```
 
 ### Conventions structurelles (décisions actées, à respecter)
 
 - **HTML dupliqué par page** : la nav et le footer sont écrits en dur dans chaque fichier (pas d'injection JS). Raison : robustesse, SEO, pas de flash de chargement. Si tu modifies la nav ou le footer, **répercute le changement dans les 3 fichiers**.
-- **CSS et JS uniques et partagés** : un seul `style.css`, un seul `main.js`. Le design reste centralisé.
+- **CSS unique et partagé** : un seul `style.css`. Le design reste centralisé.
+- **JS** : `main.js` partagé sur les 3 pages (nav, scroll, reveal). Exception assumée : `hero3d.js`, module ES chargé **uniquement sur l'accueil** pour la couche WOW 3D — séparé pour ne pas charger Three.js (~1,2 Mo) sur les pages où il est inutile.
+- **Three.js hébergé en local** (`assets/vendor/three.module.js`) via import map, pas de CDN externe — robustesse et conformité « pas de dépendance build ».
 - **Navigation** : nav fixe identique partout. Depuis les pages détail, les liens pointent vers `index.html#section`. La page active porte la classe `.active`.
 
 ## Design system (NE PAS dévier sans validation)
@@ -94,15 +98,23 @@ L'orange est réservé aux **accents** : liens, boutons, hovers, titres clés, l
 
 ### À compléter par Enzo (placeholders dans le code)
 - Photo de profil (hero) + photos/visuels des projets (`assets/img/`)
-- Email réel, liens LinkedIn / GitLab / GitHub
+- Liens GitLab / GitHub (email + LinkedIn déjà en place)
 
 ## Roadmap / état d'avancement
 
 - [x] Contenu des 3 pages finalisé
 - [x] Design system défini
 - [x] Structure HTML/CSS/JS — v1 statique complète
-- [ ] Mise en ligne GitHub Pages
-- [ ] **Couche WOW** : hero 3D avec Three.js — photo centrale, bras robotique articulé à droite (modèle GLB), puce + réseau neuronal qui pulse à gauche, animation au scroll. Accent orange. Doit rester performant sur mobile.
+- [x] Mise en ligne GitHub Pages — https://maxz0l.github.io/Portfolio/
+- [x] Finitions : favicon SVG, balises Open Graph + bannière `og-image.png`, email + LinkedIn réels
+- [x] **Couche WOW v1** : bras robotique 3D procédural dans le hero (Three.js, accueil uniquement)
+  - Silhouette industrielle 6 axes (carters moteurs, bagues orange, coude plié, pince), accent orange charte
+  - Bras construit en **géométrie procédurale** (pas de GLB), hiérarchie de pivots épaule/coude/poignet/pince
+  - Pose stable + micro-animation discrète, parallaxe au scroll
+  - Fallback : désactivé sur mobile, `prefers-reduced-motion` et sans WebGL ; rendu en pause hors écran
+- [ ] **Couche WOW v2 (cible Enzo)** : photo détourée d'Enzo en fond, bras robotique « posé » dans une main + réseau de neurones dans l'autre. Nécessite une photo adaptée (mains tendues, fond détourable). La hiérarchie de pivots du bras est déjà prête pour le repositionnement dans la main.
+- [ ] Réseau de neurones animé (2e élément 3D, à coupler avec la photo)
+- [ ] Photos réelles des projets et photo de profil
 
 ## Équipe projet (mode de travail collaboratif)
 
