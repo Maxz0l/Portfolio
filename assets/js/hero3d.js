@@ -288,14 +288,19 @@ async function init() {
     chip.add(pad);
   });
 
-  // ---------- Cadrage : bras à droite, cerveau+puce à gauche ----------
+  // ---------- Cadrage : bras à droite, puce à gauche ----------
+  // Positions proportionnelles à la demi-largeur visible -> pas de clipping,
+  // écartement qui s'adapte (plus large sur grand écran, resserré sur petit).
   function layoutForViewport() {
     const aspect = mount.clientWidth / mount.clientHeight;
+    const halfH = Math.tan((camera.fov * Math.PI / 180) / 2) * camera.position.z;
+    const halfW = halfH * aspect;
     const wide = aspect > 1.4;
-    root.position.x = wide ? 3.8 : 2.4;
-    root.scale.setScalar(wide ? 0.8 : 0.64);
-    netRoot.position.x = wide ? -4.3 : -2.7;
-    netRoot.scale.setScalar(wide ? 1.05 : 0.7);
+    // fractions calées pour rester intégralement dans le cadre (marge incluse)
+    root.position.x = halfW * (wide ? 0.56 : 0.40);
+    root.scale.setScalar(wide ? 0.8 : 0.6);
+    netRoot.position.x = -halfW * (wide ? 0.62 : 0.48);
+    netRoot.scale.setScalar(wide ? 1.05 : 0.66);
   }
   root.rotation.z = 0;
   root.position.y = 0.3;
