@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projets — Enzo Lorandi</title>
+<meta name="description" content="Les projets robotiques et embarqués d'Enzo Lorandi : LockWise, Robonbon, Robot Doseur.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="nav scrolled" id="nav">
+  <a href="index.html" class="nav-logo">Enzo Lorandi<span class="accent">.</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html#profil">Profil</a></li>
+    <li><a href="projets.html" class="active">Projets</a></li>
+    <li><a href="experiences.html">Expérience</a></li>
+    <li><a href="index.html#competences">Compétences</a></li>
+    <li><a href="index.html#contact" class="nav-cta">Contact</a></li>
+  </ul>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<header class="page-header">
+  <div class="container">
+    <div class="section-label">Projets</div>
+    <h1>Mes <span style="color:var(--accent)">projets</span></h1>
+    <p>Trois systèmes robotiques menés de la conception matérielle à l'intelligence logicielle. Pour chacun, mon rôle précis au sein de l'équipe.</p>
+  </div>
+</header>
+
+<main class="container" style="padding-bottom: var(--s7);">
+
+  <article class="project-detail" id="lockwise">
+    <div class="pd-media">
+      <div class="ph">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        Photo / schéma LockWise
+      </div>
+    </div>
+    <div class="pd-body">
+      <span class="tag">// Système embarqué</span>
+      <h2>LockWise</h2>
+      <p class="pd-tagline">Système embarqué de gestion sécurisée des clés par badge RFID.</p>
+      <div class="pd-meta-row">
+        <span>CPE Lyon</span><span>Équipe de 7</span><span>STM32 · Raspberry Pi · Django</span>
+      </div>
+      <div class="pd-section">
+        <h4>Contexte</h4>
+        <p>Dans un bâtiment ancien, remplacer toutes les serrures est coûteux. LockWise centralise les clés physiques dans un casier connecté, accessible uniquement par badge RFID, sans modifier l'infrastructure existante.</p>
+      </div>
+      <div class="pd-section">
+        <h4>Mon périmètre</h4>
+        <ul class="pd-role-list">
+          <li>Driver RFID bas niveau (MFRC522 via SPI)</li>
+          <li>Capteurs infrarouges + Reed switch (présence clé, fermeture porte)</li>
+          <li>Pilotage des actionneurs — 3 serrures via pont en H 12V</li>
+          <li>Machine à états finis (FSM) embarquée du scénario complet</li>
+          <li>Design et fabrication du boîtier</li>
+        </ul>
+      </div>
+      <div class="pd-section">
+        <h4>Stack technique</h4>
+        <div class="tag-row">
+          <span class="pill-accent">STM32F303</span>
+          <span class="pill">C / HAL</span>
+          <span class="pill">MFRC522</span>
+          <span class="pill">SPI · UART</span>
+          <span class="pill">Raspberry Pi</span>
+        </div>
+      </div>
+      <a href="https://gitlab.com/enzo4623206/lockwise" target="_blank" rel="noopener" class="btn-link">Voir le code sur GitLab →</a>
+    </div>
+  </article>
+
+  <article class="project-detail" id="robonbon">
+    <div class="pd-media">
+      <div class="ph">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        Photo / démo Robonbon
+      </div>
+    </div>
+    <div class="pd-body">
+      <span class="tag">// IA + Robotique</span>
+      <h2>Robonbon</h2>
+      <p class="pd-tagline">Robot créateur de brochettes de bonbons à commande vocale.</p>
+      <div class="pd-meta-row">
+        <span>CPE Lyon</span><span>Équipe de 3</span><span>LLM · Bras articulé · Mécatronique</span>
+      </div>
+      <div class="pd-section">
+        <h4>Contexte</h4>
+        <p>Système robotique intégrant reconnaissance vocale, traitement par LLM et contrôle d'un bras articulé pour créer des brochettes de bonbons. Une démonstration de la boucle complète perception → décision → action.</p>
+      </div>
+      <div class="pd-section">
+        <h4>Mon périmètre</h4>
+        <ul class="pd-role-list">
+          <li>Module dialogue — pipeline reconnaissance vocale + LLM</li>
+          <li>Câblage et électronique générale</li>
+          <li>Conception et fabrication du distributeur de bonbons (rails + moteurs DC)</li>
+        </ul>
+      </div>
+      <div class="pd-section">
+        <h4>Stack technique</h4>
+        <div class="tag-row">
+          <span class="pill-accent">Python</span>
+          <span class="pill">LLM</span>
+          <span class="pill">Moteurs DC</span>
+          <span class="pill">Capteur infrarouge</span>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="project-detail" id="doseur">
+    <div class="pd-media">
+      <div class="ph">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        Photo / schéma Robot Doseur
+      </div>
+    </div>
+    <div class="pd-body">
+      <span class="tag">// Mécatronique</span>
+      <h2>Robot Doseur</h2>
+      <p class="pd-tagline">Robot préparateur de boissons à paramètres contrôlés.</p>
+      <div class="pd-meta-row">
+        <span>CPE Lyon</span><span>Équipe de 3</span><span>Électronique analogique · Traitement du signal</span>
+      </div>
+      <div class="pd-section">
+        <h4>Contexte</h4>
+        <p>Système mécatronique préparant des boissons à température (20–50°C), concentration (10–90%) et volume (50–250ml) contrôlés. Chaîne complète capteurs → conditionnement → actionneurs.</p>
+      </div>
+      <div class="pd-section">
+        <h4>Mon périmètre</h4>
+        <ul class="pd-role-list">
+          <li>Mesure de température — capteur thermique + conditionnement du signal</li>
+          <li>Mesure de concentration — oscillateur NE555 + photodiode</li>
+          <li>Mesure de volume — pont de mesure</li>
+          <li>MLI + pilotage pont en H</li>
+          <li>Électrovannes et résistance de chauffage</li>
+        </ul>
+      </div>
+      <div class="pd-section">
+        <h4>Stack technique</h4>
+        <div class="tag-row">
+          <span class="pill-accent">Électronique analogique</span>
+          <span class="pill">NE555</span>
+          <span class="pill">PWM / Pont en H</span>
+          <span class="pill">Traitement du signal</span>
+        </div>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <span>© 2026 Enzo Lorandi</span>
+    <span>Ingénieur ETI · CPE Lyon</span>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

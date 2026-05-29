@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enzo Lorandi - Ingénieur Robotique & IA</title>
+<meta name="description" content="Portfolio d'Enzo Lorandi, ingénieur ETI spécialisé en robotique de service. À la recherche d'un PFE en robotique, IA et sciences du numérique.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-logo">Enzo Lorandi<span class="accent">.</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#profil">Profil</a></li>
+    <li><a href="#projets">Projets</a></li>
+    <li><a href="#experience">Expérience</a></li>
+    <li><a href="#competences">Compétences</a></li>
+    <li><a href="#contact" class="nav-cta">Contact</a></li>
+  </ul>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<header class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-photo">
+      <span class="ph">[ photo ]</span>
+    </div>
+    <h1>Enzo Lorandi</h1>
+    <div class="subtitle">Robotique · IA · Sciences du numérique</div>
+    <p class="objective">À la recherche d'un PFE en robotique — 2026</p>
+    <div class="hero-actions">
+      <a href="#projets" class="btn-primary">Voir mes projets</a>
+      <a href="#contact" class="btn-ghost">Me contacter</a>
+    </div>
+  </div>
+  <a href="#profil" class="scroll-hint"><span>Scroll</span><span class="line"></span></a>
+</header>
+
+<section class="section" id="profil">
+  <div class="container">
+    <div class="section-label">01 — Profil</div>
+    <p class="piliers-intro">Ingénieur en formation à CPE Lyon, je travaille à l'intersection du logiciel embarqué, de l'intelligence artificielle et du matériel.</p>
+    <div class="piliers-grid">
+      <div class="pilier">
+        <div class="pilier-icon">🎓</div>
+        <h3>Formation internationale</h3>
+        <p>Spécialisation robotique de service à CPE Lyon, approfondie par un échange à l'Università di Padova en neurorobotique et robotique intelligente.</p>
+      </div>
+      <div class="pilier">
+        <div class="pilier-icon">🚇</div>
+        <h3>Expérience terrain</h3>
+        <p>Coordinateur technique systèmes à la RATP sur l'implémentation du MF19 — signalisation, traction, systèmes critiques en exploitation.</p>
+      </div>
+      <div class="pilier">
+        <div class="pilier-icon">🤖</div>
+        <h3>Projets concrets</h3>
+        <p>Trois systèmes robotiques menés du capteur à l'IA : un casier sécurisé, un robot vocal piloté par LLM, un robot doseur mécatronique.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="projets">
+  <div class="container">
+    <div class="section-label">02 — Projets</div>
+    <h2>Mes <span class="accent">projets</span></h2>
+    <div class="projects-grid">
+
+      <article class="project-card">
+        <div class="card-media">
+          <div class="ph">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            Photo LockWise
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="tag">// Système embarqué</span>
+          <h3>LockWise</h3>
+          <p>Casier sécurisé à badge RFID pour la gestion des clés. Architecture STM32 + Raspberry Pi.</p>
+          <a href="projets.html#lockwise" class="btn-link">Voir le projet →</a>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div class="card-media">
+          <div class="ph">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            Photo Robonbon
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="tag">// IA + Robotique</span>
+          <h3>Robonbon</h3>
+          <p>Robot créateur de brochettes de bonbons à commande vocale, piloté par LLM.</p>
+          <a href="projets.html#robonbon" class="btn-link">Voir le projet →</a>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div class="card-media">
+          <div class="ph">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            Photo Robot Doseur
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="tag">// Mécatronique</span>
+          <h3>Robot Doseur</h3>
+          <p>Robot préparateur de boissons à température, concentration et volume contrôlés.</p>
+          <a href="projets.html#doseur" class="btn-link">Voir le projet →</a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section class="section" id="experience">
+  <div class="container">
+    <div class="section-label">03 — Expérience</div>
+    <h2>Expérience <span class="accent">terrain</span></h2>
+    <div class="xp-preview">
+      <div class="role">Assistant Coordinateur Technique Systèmes</div>
+      <h3>RATP — Rénovation des lignes 3bis, 7bis et 10</h3>
+      <div class="meta">via IKOS Consulting · Mars — Septembre 2026 · Paris</div>
+      <p>Coordination de l'implémentation du MF19 au sein de l'équipe RMOE. Périmètre systèmes : signalisation, traction, interfaces voie/GC, et coordination avec les exploitants de maintenance et de service.</p>
+      <div class="tag-row" style="margin-bottom: var(--s3);">
+        <span class="pill-accent">Signalisation</span>
+        <span class="pill">Traction</span>
+        <span class="pill">Coordination multi-équipes</span>
+      </div>
+      <a href="experiences.html" class="btn-link">Voir tout mon parcours →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="competences">
+  <div class="container">
+    <div class="section-label">04 — Compétences</div>
+    <h2>Stack <span class="accent">technique</span></h2>
+    <div class="skills-grid">
+      <div class="skill-block">
+        <h3><span class="dot"></span>Robotique</h3>
+        <div class="tag-row">
+          <span class="pill-accent">ROS2 (avancé)</span>
+          <span class="pill">Gazebo</span>
+          <span class="pill">Cinématique inverse</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <h3><span class="dot"></span>Développement</h3>
+        <div class="tag-row">
+          <span class="pill">Python</span>
+          <span class="pill">C / C++</span>
+          <span class="pill">JavaScript</span>
+          <span class="pill">Git / GitLab</span>
+          <span class="pill">Déploiement</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <h3><span class="dot"></span>IA appliquée</h3>
+        <div class="tag-row">
+          <span class="pill-accent">LLM</span>
+          <span class="pill">Claude Code</span>
+          <span class="pill">Prompt engineering</span>
+          <span class="pill">Neurorobotique</span>
+          <span class="pill">Learning from Networks</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <h3><span class="dot"></span>Hardware</h3>
+        <div class="tag-row">
+          <span class="pill">STM32</span>
+          <span class="pill">Raspberry Pi</span>
+          <span class="pill">Arduino</span>
+          <span class="pill">SPI / I2C / UART / CAN</span>
+          <span class="pill">Capteurs & actionneurs</span>
+          <span class="pill">Électronique analogique</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <h3><span class="dot"></span>Conception</h3>
+        <div class="tag-row">
+          <span class="pill">Impression 3D</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <h3><span class="dot"></span>Langues</h3>
+        <div class="tag-row">
+          <span class="pill">Français (natif)</span>
+          <span class="pill">Anglais (C1)</span>
+          <span class="pill">Italien (notions)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <div class="container">
+    <div class="section-label">05 — Contact</div>
+    <div class="contact-grid">
+      <div class="contact-text">
+        <h2>Parlons de votre <span class="accent">projet</span></h2>
+        <p>Je recherche un PFE en robotique pour <span class="accent">2026</span>. N'hésitez pas à me contacter pour échanger sur une opportunité.</p>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:ton.email@exemple.com" class="contact-item">
+          <span class="ci-icon">@</span>
+          <span><span class="ci-label">Email</span><br><span class="ci-val">ton.email@exemple.com</span></span>
+        </a>
+        <a href="https://linkedin.com/in/" target="_blank" rel="noopener" class="contact-item">
+          <span class="ci-icon">in</span>
+          <span><span class="ci-label">LinkedIn</span><br><span class="ci-val">Enzo Lorandi</span></span>
+        </a>
+        <a href="https://gitlab.com/" target="_blank" rel="noopener" class="contact-item">
+          <span class="ci-icon">GL</span>
+          <span><span class="ci-label">GitLab</span><br><span class="ci-val">Mes dépôts de code</span></span>
+        </a>
+        <a href="https://github.com/" target="_blank" rel="noopener" class="contact-item">
+          <span class="ci-icon">GH</span>
+          <span><span class="ci-label">GitHub</span><br><span class="ci-val">Mes projets</span></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <span>© 2026 Enzo Lorandi</span>
+    <span>Ingénieur ETI · CPE Lyon</span>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
