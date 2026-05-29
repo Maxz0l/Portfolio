@@ -100,7 +100,25 @@ async function init() {
   const root = new THREE.Group();
   scene.add(root);
 
-  // --- socle au sol (large, stable) ---
+  // --- sol : disque sur lequel repose le socle (ancre le robot) ---
+  const FLOOR_Y = -3.075; // dessous du socle
+  const floor = new THREE.Mesh(
+    new THREE.CircleGeometry(3.0, 48),
+    new THREE.MeshStandardMaterial({ color: 0x0d0d15, metalness: 0.2, roughness: 0.9, transparent: true, opacity: 0.85 })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = FLOOR_Y;
+  root.add(floor);
+  // liseré orange discret au bord du sol
+  const floorRing = new THREE.Mesh(
+    new THREE.RingGeometry(2.85, 3.0, 48),
+    new THREE.MeshStandardMaterial({ color: COL_ACCENT, emissive: COL_ACCENT, emissiveIntensity: 0.4, transparent: true, opacity: 0.5 })
+  );
+  floorRing.rotation.x = -Math.PI / 2;
+  floorRing.position.y = FLOOR_Y + 0.01;
+  root.add(floorRing);
+
+  // --- socle au sol (large, stable), posé sur le disque ---
   const foot = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.35, 0.35, 36), matDark);
   foot.position.y = -2.9;
   root.add(foot);
@@ -156,22 +174,22 @@ async function init() {
   const fingerR = new THREE.Mesh(fingerGeo, matAccent);
   gripper.add(fingerL, fingerR);
 
-  // ---------- Pose de repos (figée, lisible) : bras qui "atteint" ----------
+  // ---------- Pose de repos (figée, lisible) : bras qui tend vers le nom ----------
   // angles de base autour desquels oscille la micro-animation
-  const POSE = { shoulder: -0.55, elbow: 1.15, wrist: -0.35 };
-  shoulder.rotation.z = POSE.shoulder;   // épaule inclinée vers l'arrière
-  elbow.rotation.z = POSE.elbow;         // coude nettement plié
-  wrist.rotation.z = POSE.wrist;         // poignet orienté vers l'avant
+  // épaule très inclinée + coude plié -> la pince pointe vers le haut-gauche (le nom)
+  const POSE = { shoulder: -0.85, elbow: 1.25, wrist: -0.5 };
+  shoulder.rotation.z = POSE.shoulder;
+  elbow.rotation.z = POSE.elbow;
+  wrist.rotation.z = POSE.wrist;
 
-  // ---------- Cadrage : bras décalé à droite, légèrement incliné ----------
+  // ---------- Cadrage : socle posé au sol, bras décalé à droite ----------
   function layoutForViewport() {
-    // décalage horizontal proportionnel à la largeur (le texte occupe le centre/gauche)
     const aspect = mount.clientWidth / mount.clientHeight;
-    root.position.x = aspect > 1.4 ? 3.4 : 2.1;
-    root.scale.setScalar(aspect > 1.4 ? 0.8 : 0.66);
+    root.position.x = aspect > 1.4 ? 3.5 : 2.2;
+    root.scale.setScalar(aspect > 1.4 ? 0.8 : 0.64);
   }
-  root.rotation.z = -0.16;
-  root.position.y = 0.1;
+  root.rotation.z = 0;        // base à plat, alignée avec le sol
+  root.position.y = -0.5;     // remonté : robot plus présent, mais posé sur son sol
   layoutForViewport();
 
   // ---------- Micro-animation : pose stable + respiration discrète ----------
@@ -199,7 +217,7 @@ async function init() {
 
     // parallaxe au scroll : le bras pivote et glisse légèrement
     root.rotation.y = scrollT * 0.4;
-    root.position.y = 0.1 - scrollT * 1.2;
+    root.position.y = -0.5 - scrollT * 1.2;
 
     renderer.render(scene, camera);
   }
