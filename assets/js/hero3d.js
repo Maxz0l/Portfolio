@@ -235,7 +235,7 @@ async function init() {
 
   // --- puce électronique posée par-dessus (légèrement basculée) ---
   const chip = new THREE.Group();
-  chip.position.z = 0.9;
+  chip.position.set(0, -0.2, 0.9); // centré sur la masse du cerveau
   chip.rotation.x = -0.35; // basculement 3D -> perspective, moins "plat"
   chip.rotation.z = 0.12;
   netRoot.add(chip);
