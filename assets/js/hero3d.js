@@ -41,7 +41,7 @@ async function init() {
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(42, mount.clientWidth / mount.clientHeight, 0.1, 100);
-  camera.position.set(0, 0.4, 9);
+  camera.position.set(0, 0.4, 12);
   camera.lookAt(0, 0, 0);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -73,97 +73,124 @@ async function init() {
   });
 
   // ---------- Helpers de construction ----------
-  function segment(length, radius, mat) {
-    // un "os" de bras : cylindre vertical dont la base est en y=0
-    const g = new THREE.CylinderGeometry(radius, radius * 0.92, length, 24);
+  // "os" du bras : poutre effilée dont la base est en y=0 (creuse une lecture industrielle)
+  function link(length, rBase, rTop, mat) {
+    const g = new THREE.CylinderGeometry(rTop, rBase, length, 20);
     g.translate(0, length / 2, 0);
     return new THREE.Mesh(g, mat);
   }
-  function jointRing(radius) {
-    const g = new THREE.TorusGeometry(radius, radius * 0.32, 16, 28);
-    g.rotateX(Math.PI / 2);
+  // carter de moteur : cylindre couché sur l'axe X (le repère visuel clé d'un bras 6 axes)
+  function motorHousing(radius, width, mat) {
+    const g = new THREE.CylinderGeometry(radius, radius, width, 28);
+    g.rotateZ(Math.PI / 2);
+    return new THREE.Mesh(g, mat);
+  }
+  // bague d'accent orange autour d'un carter (axe X)
+  function accentBand(radius, width) {
+    const g = new THREE.CylinderGeometry(radius * 1.04, radius * 1.04, width, 28, 1, true);
+    g.rotateZ(Math.PI / 2);
     return new THREE.Mesh(g, matAccent);
   }
 
-  // ---------- Assemblage du bras (hiérarchie de pivots) ----------
-  // root -> base -> turntable -> shoulder -> upperArm -> elbow -> forearm -> wrist -> gripper
+  // ---------- Assemblage : bras industriel 6 axes simplifié ----------
+  // Hiérarchie de pivots : root -> base -> turntable(J1) -> shoulder(J2)
+  //   -> upperArm -> elbow(J3) -> forearm -> wrist(J4) -> gripper
+  // Silhouette : socle large, carters de moteurs horizontaux à chaque
+  // articulation, segments effilés, coude plié -> lecture "bras qui atteint".
   const root = new THREE.Group();
   scene.add(root);
 
-  // socle
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.25, 0.45, 32), matDark);
-  base.position.y = -2.6;
-  root.add(base);
+  // --- socle au sol (large, stable) ---
+  const foot = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.35, 0.35, 36), matDark);
+  foot.position.y = -2.9;
+  root.add(foot);
+  const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.95, 0.7, 32), matBody);
+  pillar.position.y = -2.45;
+  root.add(pillar);
 
-  // plateau tournant
+  // --- J1 : plateau tournant (axe vertical) ---
   const turntable = new THREE.Group();
-  turntable.position.y = -2.35;
+  turntable.position.y = -2.05;
   root.add(turntable);
-  const tt = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.85, 0.4, 28), matBody);
-  turntable.add(tt);
+  turntable.add(new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.72, 0.45, 28), matBody));
 
-  // épaule
+  // --- J2 : épaule (carter horizontal) ---
   const shoulder = new THREE.Group();
-  shoulder.position.y = 0.2;
+  shoulder.position.y = 0.35;
   turntable.add(shoulder);
-  shoulder.add(jointRing(0.5));
-  const upperArm = segment(2.2, 0.42, matBody);
+  shoulder.add(motorHousing(0.55, 1.0, matDark));
+  shoulder.add(accentBand(0.55, 0.18));
+  // bras supérieur effilé
+  const upperArm = link(2.1, 0.46, 0.34, matBody);
   shoulder.add(upperArm);
 
-  // coude (en haut du bras supérieur)
+  // --- J3 : coude (carter horizontal en bout de bras supérieur) ---
   const elbow = new THREE.Group();
-  elbow.position.y = 2.2;
+  elbow.position.y = 2.1;
   shoulder.add(elbow);
-  elbow.add(jointRing(0.42));
-  const forearm = segment(1.9, 0.34, matBody);
+  elbow.add(motorHousing(0.42, 0.8, matDark));
+  elbow.add(accentBand(0.42, 0.15));
+  // avant-bras plus fin
+  const forearm = link(1.75, 0.34, 0.24, matBody);
   elbow.add(forearm);
 
-  // poignet
+  // --- J4 : poignet ---
   const wrist = new THREE.Group();
-  wrist.position.y = 1.9;
+  wrist.position.y = 1.75;
   elbow.add(wrist);
-  wrist.add(jointRing(0.32));
+  wrist.add(motorHousing(0.3, 0.55, matDark));
+  // bride d'outil
+  const flange = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.22, 0.35, 20), matBody);
+  flange.position.y = 0.22;
+  wrist.add(flange);
 
-  // pince (deux doigts)
+  // --- effecteur : pince deux doigts ---
   const gripper = new THREE.Group();
-  gripper.position.y = 0.15;
+  gripper.position.y = 0.42;
   wrist.add(gripper);
-  const fingerGeo = new THREE.BoxGeometry(0.14, 0.6, 0.3);
-  fingerGeo.translate(0, 0.3, 0);
+  const palm = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.16, 0.4), matDark);
+  gripper.add(palm);
+  const fingerGeo = new THREE.BoxGeometry(0.12, 0.55, 0.32);
+  fingerGeo.translate(0, 0.27, 0);
   const fingerL = new THREE.Mesh(fingerGeo, matAccent);
   const fingerR = new THREE.Mesh(fingerGeo, matAccent);
-  fingerL.position.x = -0.28;
-  fingerR.position.x = 0.28;
   gripper.add(fingerL, fingerR);
+
+  // ---------- Pose de repos (figée, lisible) : bras qui "atteint" ----------
+  // angles de base autour desquels oscille la micro-animation
+  const POSE = { shoulder: -0.55, elbow: 1.15, wrist: -0.35 };
+  shoulder.rotation.z = POSE.shoulder;   // épaule inclinée vers l'arrière
+  elbow.rotation.z = POSE.elbow;         // coude nettement plié
+  wrist.rotation.z = POSE.wrist;         // poignet orienté vers l'avant
 
   // ---------- Cadrage : bras décalé à droite, légèrement incliné ----------
   function layoutForViewport() {
     // décalage horizontal proportionnel à la largeur (le texte occupe le centre/gauche)
     const aspect = mount.clientWidth / mount.clientHeight;
-    root.position.x = aspect > 1.4 ? 3.0 : 1.8;
-    root.scale.setScalar(aspect > 1.4 ? 1 : 0.82);
+    root.position.x = aspect > 1.4 ? 3.4 : 2.1;
+    root.scale.setScalar(aspect > 1.4 ? 0.8 : 0.66);
   }
-  root.rotation.z = -0.12;
-  root.position.y = 0.3;
+  root.rotation.z = -0.16;
+  root.position.y = 0.1;
   layoutForViewport();
 
-  // ---------- Animation idle : mouvement lent et organique ----------
+  // ---------- Micro-animation : pose stable + respiration discrète ----------
   const clock = new THREE.Clock();
   let scrollT = 0; // 0 en haut, 1 quand le hero est sorti
 
   function animate() {
     const t = clock.getElapsedTime();
 
-    // rotation continue du plateau (balayage)
-    turntable.rotation.y = Math.sin(t * 0.35) * 0.6;
+    // léger balayage du plateau, amplitude faible (reste lisible)
+    turntable.rotation.y = Math.sin(t * 0.3) * 0.22;
 
-    // articulations : sinusoïdes déphasées -> geste fluide
-    shoulder.rotation.z = -0.35 + Math.sin(t * 0.5) * 0.18;
-    elbow.rotation.z = 0.6 + Math.sin(t * 0.5 + 0.9) * 0.22;
-    wrist.rotation.z = Math.sin(t * 0.7 + 0.4) * 0.25;
+    // micro-oscillations autour de la pose de repos
+    shoulder.rotation.z = POSE.shoulder + Math.sin(t * 0.5) * 0.05;
+    elbow.rotation.z = POSE.elbow + Math.sin(t * 0.5 + 0.9) * 0.06;
+    wrist.rotation.z = POSE.wrist + Math.sin(t * 0.7 + 0.4) * 0.05;
 
-    // pince qui s'ouvre/se ferme doucement
-    const grip = 0.18 + (Math.sin(t * 0.9) * 0.5 + 0.5) * 0.18;
+    // pince qui respire (ouverture/fermeture légère)
+    const grip = 0.16 + (Math.sin(t * 0.8) * 0.5 + 0.5) * 0.1;
     fingerL.position.x = -grip;
     fingerR.position.x = grip;
 
@@ -171,8 +198,8 @@ async function init() {
     accentLight.intensity = 16 + Math.sin(t * 1.3) * 5;
 
     // parallaxe au scroll : le bras pivote et glisse légèrement
-    root.rotation.y = scrollT * 0.5;
-    root.position.y = 0.3 - scrollT * 1.2;
+    root.rotation.y = scrollT * 0.4;
+    root.position.y = 0.1 - scrollT * 1.2;
 
     renderer.render(scene, camera);
   }
