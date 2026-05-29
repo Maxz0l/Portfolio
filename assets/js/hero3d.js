@@ -165,65 +165,108 @@ async function init() {
   wrist.rotation.z = POSE.wrist;
 
   // ===========================================================
-  // Élément gauche : réseau de neurones qui pulse (versant IA)
-  // Réseau en couches (entrée -> cachées -> sortie), nœuds qui
-  // s'allument par vagues, connexions orange discrètes.
+  // Élément gauche : cerveau stylisé en fond + puce électronique
+  // par-dessus, qui pulse en orange (versant IA).
   // ===========================================================
   const netRoot = new THREE.Group();
   scene.add(netRoot);
 
-  const LAYERS = [3, 4, 4, 2];   // nb de nœuds par couche
-  const LAYER_GAP = 1.5;         // espacement horizontal des couches
-  const NODE_GAP = 1.2;          // espacement vertical des nœuds
-
-  const nodeGeo = new THREE.SphereGeometry(0.16, 16, 16);
-  const nodes = []; // { mesh, layer }
-  const layerNodes = [];
-
-  LAYERS.forEach((count, li) => {
-    const x = (li - (LAYERS.length - 1) / 2) * LAYER_GAP;
-    const col = [];
-    for (let i = 0; i < count; i++) {
-      const y = (i - (count - 1) / 2) * NODE_GAP;
-      // matériau propre à chaque nœud (emissive animée individuellement)
-      const mat = new THREE.MeshStandardMaterial({
-        color: COL_BODY, emissive: COL_ACCENT, emissiveIntensity: 0.2,
-        metalness: 0.3, roughness: 0.5
-      });
-      const mesh = new THREE.Mesh(nodeGeo, mat);
-      mesh.position.set(x, y, (Math.random() - 0.5) * 0.6);
-      netRoot.add(mesh);
-      const node = { mesh, layer: li };
-      nodes.push(node);
-      col.push(node);
-    }
-    layerNodes.push(col);
+  // --- cerveau : masse organique bosselée, deux lobes, en retrait ---
+  const brainMat = new THREE.MeshStandardMaterial({
+    color: 0x15131c, emissive: COL_ACCENT, emissiveIntensity: 0.06,
+    metalness: 0.2, roughness: 0.85, transparent: true, opacity: 0.9
   });
+  function makeLobe() {
+    const g = new THREE.IcosahedronGeometry(1.1, 3);
+    const p = g.attributes.position;
+    const v = new THREE.Vector3();
+    // déformation pseudo-bruit -> surface "circonvolutions"
+    for (let i = 0; i < p.count; i++) {
+      v.fromBufferAttribute(p, i);
+      const n =
+        Math.sin(v.x * 4.2) * Math.cos(v.y * 3.7) +
+        Math.sin(v.y * 5.1 + 1.3) * Math.cos(v.z * 4.4) +
+        Math.sin(v.z * 3.9 + 2.1) * Math.cos(v.x * 4.8);
+      v.multiplyScalar(1 + n * 0.06);
+      p.setXYZ(i, v.x, v.y, v.z);
+    }
+    g.computeVertexNormals();
+    return new THREE.Mesh(g, brainMat);
+  }
+  const brain = new THREE.Group();
+  const lobeL = makeLobe(); lobeL.position.x = -0.55; lobeL.scale.set(0.95, 1.05, 1.15);
+  const lobeR = makeLobe(); lobeR.position.x = 0.55; lobeR.scale.set(0.95, 1.05, 1.15);
+  brain.add(lobeL, lobeR);
+  brain.position.z = -0.8; // en retrait, derrière la puce
+  netRoot.add(brain);
 
-  // connexions entre couches adjacentes
-  const edgePts = [];
-  for (let li = 0; li < layerNodes.length - 1; li++) {
-    layerNodes[li].forEach((a) => {
-      layerNodes[li + 1].forEach((b) => {
-        edgePts.push(a.mesh.position, b.mesh.position);
-      });
+  // halo orange diffus derrière le cerveau
+  const brainGlow = new THREE.PointLight(COL_ACCENT, 6, 9, 2);
+  brainGlow.position.set(0, 0, -1.6);
+  netRoot.add(brainGlow);
+
+  // --- puce électronique posée par-dessus ---
+  const chip = new THREE.Group();
+  chip.position.z = 0.9;
+  netRoot.add(chip);
+
+  const chipBody = new THREE.Mesh(
+    new THREE.BoxGeometry(1.5, 1.5, 0.28),
+    new THREE.MeshStandardMaterial({ color: 0x0e0e16, metalness: 0.6, roughness: 0.4 })
+  );
+  chip.add(chipBody);
+
+  // marque centrale lumineuse (le "cœur" qui pulse)
+  const chipCore = new THREE.Mesh(
+    new THREE.BoxGeometry(0.7, 0.7, 0.06),
+    new THREE.MeshStandardMaterial({ color: COL_ACCENT, emissive: COL_ACCENT, emissiveIntensity: 1.0 })
+  );
+  chipCore.position.z = 0.16;
+  chip.add(chipCore);
+
+  // pattes métalliques sur les 4 côtés
+  const pinMat = new THREE.MeshStandardMaterial({ color: 0x6a6a72, metalness: 0.9, roughness: 0.3 });
+  const pinGeo = new THREE.BoxGeometry(0.32, 0.08, 0.08);
+  const PINS = 5, span = 1.05;
+  for (let i = 0; i < PINS; i++) {
+    const off = (i - (PINS - 1) / 2) * (span / (PINS - 1)) * 2 * 0.5;
+    // gauche / droite
+    [[-1, 0], [1, 0]].forEach(([sx]) => {
+      const pin = new THREE.Mesh(pinGeo, pinMat);
+      pin.position.set(sx * 0.9, off, 0);
+      chip.add(pin);
+    });
+    // haut / bas (pattes tournées 90°)
+    [[0, -1], [0, 1]].forEach(([, sy]) => {
+      const pin = new THREE.Mesh(pinGeo, pinMat);
+      pin.rotation.z = Math.PI / 2;
+      pin.position.set(off, sy * 0.9, 0);
+      chip.add(pin);
     });
   }
-  const edgeGeo = new THREE.BufferGeometry().setFromPoints(edgePts);
-  const edgeMat = new THREE.LineBasicMaterial({
-    color: COL_ACCENT, transparent: true, opacity: 0.18
-  });
-  const edges = new THREE.LineSegments(edgeGeo, edgeMat);
-  netRoot.add(edges);
 
-  // ---------- Cadrage : bras à droite, réseau à gauche ----------
+  // pistes de circuit orange (lignes rayonnant depuis la puce)
+  const tracePts = [];
+  for (let i = 0; i < 14; i++) {
+    const a = (i / 14) * Math.PI * 2;
+    const r0 = 0.85, r1 = 1.7 + (i % 3) * 0.4;
+    tracePts.push(
+      new THREE.Vector3(Math.cos(a) * r0, Math.sin(a) * r0, 0.1),
+      new THREE.Vector3(Math.cos(a) * r1, Math.sin(a) * r1, 0.1)
+    );
+  }
+  const traceMat = new THREE.LineBasicMaterial({ color: COL_ACCENT, transparent: true, opacity: 0.3 });
+  const traces = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(tracePts), traceMat);
+  chip.add(traces);
+
+  // ---------- Cadrage : bras à droite, cerveau+puce à gauche ----------
   function layoutForViewport() {
     const aspect = mount.clientWidth / mount.clientHeight;
     const wide = aspect > 1.4;
     root.position.x = wide ? 3.8 : 2.4;
     root.scale.setScalar(wide ? 0.8 : 0.64);
     netRoot.position.x = wide ? -3.9 : -2.5;
-    netRoot.scale.setScalar(wide ? 0.85 : 0.6);
+    netRoot.scale.setScalar(wide ? 0.95 : 0.66);
   }
   root.rotation.z = 0;
   root.position.y = 0.3;
@@ -253,14 +296,15 @@ async function init() {
     // respiration de la lumière d'accent
     accentLight.intensity = 16 + Math.sin(t * 1.3) * 5;
 
-    // réseau de neurones : vague d'activation qui traverse les couches
-    nodes.forEach((n) => {
-      const wave = Math.sin(t * 1.6 - n.layer * 0.9);
-      n.mesh.material.emissiveIntensity = 0.15 + (wave * 0.5 + 0.5) * 0.95;
-    });
-    edges.material.opacity = 0.14 + (Math.sin(t * 1.6) * 0.5 + 0.5) * 0.12;
-    // léger flottement 3D
-    netRoot.rotation.y = Math.sin(t * 0.25) * 0.35;
+    // cerveau + puce : pulsation orange (battement)
+    const pulse = Math.sin(t * 1.8) * 0.5 + 0.5; // 0..1
+    chipCore.material.emissiveIntensity = 0.5 + pulse * 1.6;
+    traces.material.opacity = 0.18 + pulse * 0.32;
+    brainGlow.intensity = 4 + pulse * 7;
+    brainMat.emissiveIntensity = 0.04 + pulse * 0.12;
+    // léger flottement 3D de l'ensemble
+    netRoot.rotation.y = Math.sin(t * 0.25) * 0.28;
+    chip.rotation.z = Math.sin(t * 0.4) * 0.05;
 
     // parallaxe au scroll : les deux éléments glissent légèrement
     root.rotation.y = scrollT * 0.4;
