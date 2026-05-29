@@ -41,21 +41,34 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
+/* halos d'ambiance fixes — profondeur subtile, jamais tape-à-l'œil */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(620px circle at 82% 8%, rgba(255, 140, 26, 0.07), transparent 60%),
+    radial-gradient(720px circle at 8% 96%, rgba(255, 140, 26, 0.045), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
 a { text-decoration: none; color: inherit; }
 ul { list-style: none; }
 img { max-width: 100%; display: block; }
 
-/* grille blueprint de fond, discrète */
+/* grille blueprint de fond, discrète — densifiée vers le haut, s'estompe vers le bas */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 140, 26, 0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 140, 26, 0.022) 1px, transparent 1px);
+    linear-gradient(rgba(255, 140, 26, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 140, 26, 0.035) 1px, transparent 1px);
   background-size: 48px 48px;
   pointer-events: none;
   z-index: 0;
+  -webkit-mask-image: radial-gradient(140% 110% at 50% 0%, #000 30%, transparent 78%);
+  mask-image: radial-gradient(140% 110% at 50% 0%, #000 30%, transparent 78%);
 }
 
 .container { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--s4); position: relative; z-index: 1; }
@@ -201,12 +214,21 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
 }
 .hero-glow {
   position: absolute;
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(255, 140, 26, 0.08) 0%, transparent 65%);
-  top: 50%; left: 50%;
+  width: 720px; height: 720px;
+  max-width: 110vw;
+  background: radial-gradient(circle, rgba(255, 140, 26, 0.10) 0%, rgba(255, 140, 26, 0.04) 38%, transparent 66%);
+  top: 46%; left: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 0;
+  animation: heroPulse 7s ease-in-out infinite;
+}
+@keyframes heroPulse {
+  0%, 100% { opacity: 0.85; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 1;    transform: translate(-50%, -50%) scale(1.06); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-glow { animation: none; }
 }
 .hero-inner { position: relative; z-index: 2; }
 .hero-photo {
