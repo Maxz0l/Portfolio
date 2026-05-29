@@ -60,6 +60,11 @@ async function init() {
   accentLight.position.set(2.5, 1.5, 3);
   scene.add(accentLight);
 
+  // rim light dédié au bloc gauche (ciselle les arêtes de la puce)
+  const chipRim = new THREE.DirectionalLight(0xfff2e0, 1.2);
+  chipRim.position.set(-6, 3, 4);
+  scene.add(chipRim);
+
   const rim = new THREE.DirectionalLight(COL_ACCENT, 0.6);
   rim.position.set(5, -2, -4);
   scene.add(rim);
@@ -100,25 +105,7 @@ async function init() {
   const root = new THREE.Group();
   scene.add(root);
 
-  // --- sol : disque sur lequel repose le socle (ancre le robot) ---
-  const FLOOR_Y = -3.075; // dessous du socle
-  const floor = new THREE.Mesh(
-    new THREE.CircleGeometry(3.0, 48),
-    new THREE.MeshStandardMaterial({ color: 0x0d0d15, metalness: 0.2, roughness: 0.9, transparent: true, opacity: 0.85 })
-  );
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.y = FLOOR_Y;
-  root.add(floor);
-  // liseré orange discret au bord du sol
-  const floorRing = new THREE.Mesh(
-    new THREE.RingGeometry(2.85, 3.0, 48),
-    new THREE.MeshStandardMaterial({ color: COL_ACCENT, emissive: COL_ACCENT, emissiveIntensity: 0.4, transparent: true, opacity: 0.5 })
-  );
-  floorRing.rotation.x = -Math.PI / 2;
-  floorRing.position.y = FLOOR_Y + 0.01;
-  root.add(floorRing);
-
-  // --- socle au sol (large, stable), posé sur le disque ---
+  // --- socle au sol (large, stable) ---
   const foot = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.35, 0.35, 36), matDark);
   foot.position.y = -2.9;
   root.add(foot);
@@ -182,14 +169,142 @@ async function init() {
   elbow.rotation.z = POSE.elbow;
   wrist.rotation.z = POSE.wrist;
 
-  // ---------- Cadrage : socle posé au sol, bras décalé à droite ----------
+  // ===========================================================
+  // Élément gauche : cerveau stylisé en fond + puce électronique
+  // par-dessus, qui pulse en orange (versant IA).
+  // ===========================================================
+  const netRoot = new THREE.Group();
+  scene.add(netRoot);
+
+  // halo orange diffus derrière la puce (donne du volume à l'ensemble)
+  const chipGlow = new THREE.PointLight(COL_ACCENT, 6, 9, 2);
+  chipGlow.position.set(0, 0, -1.2);
+  netRoot.add(chipGlow);
+
+  // --- puce électronique (légèrement basculée) ---
+  const chip = new THREE.Group();
+  chip.position.set(0, 0, 0); // seule entité du bloc gauche -> centrée
+  chip.rotation.x = -0.35; // basculement 3D -> perspective, moins "plat"
+  chip.rotation.z = 0.12;
+  netRoot.add(chip);
+
+  // boîtier biseauté (chanfrein via 2e box plus fine au-dessus)
+  const chipBody = new THREE.Mesh(
+    new THREE.BoxGeometry(1.5, 1.5, 0.22),
+    new THREE.MeshStandardMaterial({ color: 0x0c0c14, metalness: 0.7, roughness: 0.35 })
+  );
+  chip.add(chipBody);
+  const chipTop = new THREE.Mesh(
+    new THREE.BoxGeometry(1.32, 1.32, 0.06),
+    new THREE.MeshStandardMaterial({ color: 0x16161f, metalness: 0.6, roughness: 0.4 })
+  );
+  chipTop.position.z = 0.13;
+  chip.add(chipTop);
+
+  // petits composants CMS sur le dessus (détail de réalisme)
+  const smdMat = new THREE.MeshStandardMaterial({ color: 0x2a2a33, metalness: 0.5, roughness: 0.5 });
+  const smdPos = [[-0.5, 0.5], [0.5, -0.5], [-0.52, -0.42], [0.48, 0.5]];
+  smdPos.forEach(([sx, sy]) => {
+    const smd = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.09, 0.05), smdMat);
+    smd.position.set(sx, sy, 0.16);
+    chip.add(smd);
+  });
+
+  // cavité sombre encastrée (le die est en retrait dedans)
+  const chipRecess = new THREE.Mesh(
+    new THREE.BoxGeometry(0.78, 0.78, 0.05),
+    new THREE.MeshStandardMaterial({ color: 0x060608, metalness: 0.5, roughness: 0.6 })
+  );
+  chipRecess.position.z = 0.15;
+  chip.add(chipRecess);
+
+  // die lumineux, plus petit, au fond de la cavité (le "cœur" qui pulse)
+  const chipCore = new THREE.Mesh(
+    new THREE.BoxGeometry(0.52, 0.52, 0.04),
+    new THREE.MeshStandardMaterial({ color: COL_ACCENT, emissive: COL_ACCENT, emissiveIntensity: 1.2 })
+  );
+  chipCore.position.z = 0.17;
+  chip.add(chipCore);
+  // fines rainures sombres sur le die (motif "silicium")
+  const dieLines = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.PlaneGeometry(0.52, 0.52, 4, 4)),
+    new THREE.LineBasicMaterial({ color: 0x3a2a10, transparent: true, opacity: 0.5 })
+  );
+  dieLines.position.z = 0.2;
+  chip.add(dieLines);
+
+  // pattes métalliques sur les 4 côtés
+  const pinMat = new THREE.MeshStandardMaterial({ color: 0x7a7a82, metalness: 0.95, roughness: 0.25 });
+  const pinGeo = new THREE.BoxGeometry(0.3, 0.07, 0.07);
+  const PINS = 6, span = 1.1;
+  for (let i = 0; i < PINS; i++) {
+    const off = (i - (PINS - 1) / 2) * (span / (PINS - 1));
+    [[-1], [1]].forEach(([sx]) => {
+      const pin = new THREE.Mesh(pinGeo, pinMat);
+      pin.position.set(sx * 0.88, off, 0);
+      chip.add(pin);
+    });
+    [[-1], [1]].forEach(([sy]) => {
+      const pin = new THREE.Mesh(pinGeo, pinMat);
+      pin.rotation.z = Math.PI / 2;
+      pin.position.set(off, sy * 0.88, 0);
+      chip.add(pin);
+    });
+  }
+
+  // pistes de circuit orange en angles droits + pads (vrai routage PCB)
+  const tracePts = [];
+  const padList = [];
+  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  for (let k = 0; k < 12; k++) {
+    const d = dirs[k % 4];
+    const perp = [-d[1], d[0]];
+    const lane = ((k >> 2) - 1) * 0.42;       // décalage latéral par voie
+    const start = 0.95, mid = 1.35 + (k % 3) * 0.25, turn = lane;
+    const ax = d[0] * start + perp[0] * lane;
+    const ay = d[1] * start + perp[1] * lane;
+    const bx = d[0] * mid + perp[0] * lane;
+    const by = d[1] * mid + perp[1] * lane;
+    const cx = d[0] * mid + perp[0] * (lane + turn * 0 + (perp[0] || perp[1]) * 0); // segment coudé
+    // coude : du point B, on tourne le long de la perpendiculaire
+    const ex = bx + perp[0] * 0.45, ey = by + perp[1] * 0.45;
+    tracePts.push(new THREE.Vector3(ax, ay, 0.05), new THREE.Vector3(bx, by, 0.05));
+    tracePts.push(new THREE.Vector3(bx, by, 0.05), new THREE.Vector3(ex, ey, 0.05));
+    padList.push([ex, ey]);
+  }
+  const traceMat = new THREE.LineBasicMaterial({
+    color: COL_ACCENT, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending
+  });
+  const traces = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(tracePts), traceMat);
+  chip.add(traces);
+  // pads carrés en bout de piste
+  const padGeo = new THREE.PlaneGeometry(0.1, 0.1);
+  const padMat = new THREE.MeshStandardMaterial({
+    color: COL_ACCENT, emissive: COL_ACCENT, emissiveIntensity: 0.7, transparent: true, opacity: 0.7
+  });
+  padList.forEach(([px, py]) => {
+    const pad = new THREE.Mesh(padGeo, padMat);
+    pad.position.set(px, py, 0.05);
+    chip.add(pad);
+  });
+
+  // ---------- Cadrage : bras à droite, puce à gauche ----------
+  // Positions proportionnelles à la demi-largeur visible -> pas de clipping,
+  // écartement qui s'adapte (plus large sur grand écran, resserré sur petit).
   function layoutForViewport() {
     const aspect = mount.clientWidth / mount.clientHeight;
-    root.position.x = aspect > 1.4 ? 3.5 : 2.2;
-    root.scale.setScalar(aspect > 1.4 ? 0.8 : 0.64);
+    const halfH = Math.tan((camera.fov * Math.PI / 180) / 2) * camera.position.z;
+    const halfW = halfH * aspect;
+    const wide = aspect > 1.4;
+    // fractions calées pour rester intégralement dans le cadre (marge incluse)
+    root.position.x = halfW * (wide ? 0.56 : 0.40);
+    root.scale.setScalar(wide ? 0.8 : 0.6);
+    netRoot.position.x = -halfW * (wide ? 0.62 : 0.48);
+    netRoot.scale.setScalar(wide ? 1.05 : 0.66);
   }
-  root.rotation.z = 0;        // base à plat, alignée avec le sol
-  root.position.y = -0.5;     // remonté : robot plus présent, mais posé sur son sol
+  root.rotation.z = 0;
+  root.position.y = 0.3;
+  netRoot.position.y = 0.4;
   layoutForViewport();
 
   // ---------- Micro-animation : pose stable + respiration discrète ----------
@@ -215,9 +330,19 @@ async function init() {
     // respiration de la lumière d'accent
     accentLight.intensity = 16 + Math.sin(t * 1.3) * 5;
 
-    // parallaxe au scroll : le bras pivote et glisse légèrement
+    // puce : pulsation orange (battement)
+    const pulse = Math.sin(t * 1.8) * 0.5 + 0.5; // 0..1
+    chipCore.material.emissiveIntensity = 0.7 + pulse * 1.8;
+    traces.material.opacity = 0.22 + pulse * 0.4;
+    padMat.emissiveIntensity = 0.4 + pulse * 0.9;
+    chipGlow.intensity = 4 + pulse * 7;
+    // léger flottement 3D de l'ensemble
+    netRoot.rotation.y = Math.sin(t * 0.25) * 0.22;
+
+    // parallaxe au scroll : les deux éléments glissent légèrement
     root.rotation.y = scrollT * 0.4;
-    root.position.y = -0.5 - scrollT * 1.2;
+    root.position.y = 0.3 - scrollT * 1.2;
+    netRoot.position.y = 0.4 - scrollT * 1.0;
 
     renderer.render(scene, camera);
   }
