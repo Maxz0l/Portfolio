@@ -26,6 +26,8 @@
 </head>
 <body>
 
+<a href="#main" class="skip-link">Aller au contenu</a>
+
 <nav class="nav" id="nav">
   <a href="index.html" class="nav-logo">Enzo Lorandi<span class="accent">.</span></a>
   <ul class="nav-links" id="navLinks">
@@ -38,7 +40,7 @@
   <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 
-<header class="hero">
+<header class="hero" id="main">
   <div class="hero-glow"></div>
   <div class="hero-3d" id="hero3d" aria-hidden="true"></div>
   <div class="hero-inner">
@@ -62,17 +64,23 @@
     <p class="piliers-intro">Ingénieur en formation à CPE Lyon, je travaille à l'intersection du logiciel embarqué, de l'intelligence artificielle et du matériel.</p>
     <div class="piliers-grid">
       <div class="pilier">
-        <div class="pilier-icon">🎓</div>
+        <div class="pilier-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L2 9l10 5 10-5-10-6z"/><path d="M6 11v5c0 1.5 2.5 3 6 3s6-1.5 6-3v-5"/></svg>
+        </div>
         <h3>Formation internationale</h3>
         <p>Spécialisation robotique de service à CPE Lyon, approfondie par un échange à l'Università di Padova en neurorobotique et robotique intelligente.</p>
       </div>
       <div class="pilier">
-        <div class="pilier-icon">🚇</div>
+        <div class="pilier-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="13" rx="4"/><path d="M5 13h14"/><circle cx="8.5" cy="17.5" r="0.6" fill="currentColor"/><circle cx="15.5" cy="17.5" r="0.6" fill="currentColor"/><path d="M8 20l-1.8 2M16 20l1.8 2"/></svg>
+        </div>
         <h3>Expérience terrain</h3>
         <p>Coordinateur technique systèmes à la RATP sur l'implémentation du MF19 — signalisation, traction, systèmes critiques en exploitation.</p>
       </div>
       <div class="pilier">
-        <div class="pilier-icon">🤖</div>
+        <div class="pilier-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1.5"/><rect x="10" y="10" width="4" height="4"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></svg>
+        </div>
         <h3>Projets concrets</h3>
         <p>Trois systèmes robotiques menés du capteur à l'IA : un casier sécurisé, un robot vocal piloté par LLM, un robot doseur mécatronique.</p>
       </div>

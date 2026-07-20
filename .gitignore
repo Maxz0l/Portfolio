@@ -12,4 +12,4 @@ Thumbs.db
 # Puppeteer (screenshots locaux uniquement)
 node_modules/
 package.json
-package-lock.json
+package-lock.json__pycache__/
