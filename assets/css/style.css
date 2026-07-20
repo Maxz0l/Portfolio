@@ -317,6 +317,26 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
 }
 .scroll-hint .line { width: 1px; height: 32px; background: linear-gradient(to bottom, var(--accent), transparent); }
 
+/* ---------- MANIFESTE (index, moment fort pinné) ---------- */
+.manifesto {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  padding: var(--s7) 0;
+}
+.manifesto-text {
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: clamp(30px, 5.2vw, 66px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  max-width: 900px;
+}
+.manifesto-text .word { display: inline-block; }
+.manifesto-text .accent { color: var(--accent); }
+
 /* ---------- PILIERS (index) ---------- */
 .piliers-intro { font-size: clamp(18px, 2.5vw, 24px); max-width: 700px; margin-bottom: var(--s5); color: var(--text); }
 .piliers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s3); }

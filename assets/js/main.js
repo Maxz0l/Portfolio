@@ -147,6 +147,24 @@ if (sections.length && navItems.length) {
     });
   }
 
+  // ---------- Moment fort : manifeste pinné, mots qui s'illuminent ----------
+  const manifesto = document.querySelector('.manifesto');
+  if (manifesto) {
+    const words = manifesto.querySelectorAll('.word');
+    if (words.length) {
+      gsap.set(words, { opacity: 0.12 }); // en veille -> s'allument au scroll
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: manifesto,
+          start: 'top top',
+          end: '+=120%',
+          pin: true,
+          scrub: 0.5,
+        },
+      }).to(words, { opacity: 1, stagger: 0.4, ease: 'none' });
+    }
+  }
+
   // ---------- Barre de progression de scroll (charte orange) ----------
   const bar = document.createElement('div');
   bar.className = 'scroll-progress';
