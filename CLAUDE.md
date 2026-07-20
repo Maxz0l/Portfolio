@@ -90,7 +90,7 @@ Principes (garde-fous, cf. skill `scroll-motion`) :
 ### Expérience (page experiences, timeline du + récent au + ancien)
 1. **RATP** (Mars–Sept 2026) — Assistant Coordinateur Technique Systèmes, via IKOS Consulting. Implémentation du MF19, lignes 3bis/7bis/10. Signalisation, traction, interfaces voie/GC. NB : mettre RATP en avant, IKOS en sous-ligne.
 2. **Università di Padova** (Sept 2025–Fév 2026) — Échange robotique : robotique industrielle, intelligente, neurorobotique, learning from networks.
-3. **CPE Lyon** (Sept 2022–Juin 2026) — Diplôme ingénieur ETI, spécialisation Robotique de Service.
+3. **CPE Lyon** (Sept 2022–Juin 2026) — Diplôme ingénieur, filière ETI (Électronique, Télécommunications et Informatique), spécialisation Robotique de Service. Diplôme obtenu après validation du PFE (en cours de recherche).
 
 > Note : la mission RATP est le stage élève ingénieur (validation école). Le PFE est encore à trouver — c'est l'objectif du site.
 
