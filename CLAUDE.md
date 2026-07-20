@@ -112,9 +112,18 @@ L'orange est réservé aux **accents** : liens, boutons, hovers, titres clés, l
   - Bras construit en **géométrie procédurale** (pas de GLB), hiérarchie de pivots épaule/coude/poignet/pince
   - Pose stable + micro-animation discrète, parallaxe au scroll
   - Fallback : désactivé sur mobile, `prefers-reduced-motion` et sans WebGL ; rendu en pause hors écran
-- [ ] **Couche WOW v2 (cible Enzo)** : photo détourée d'Enzo en fond, bras robotique « posé » dans une main + réseau de neurones dans l'autre. Nécessite une photo adaptée (mains tendues, fond détourable). La hiérarchie de pivots du bras est déjà prête pour le repositionnement dans la main.
-- [ ] Réseau de neurones animé (2e élément 3D, à coupler avec la photo)
-- [ ] Photos réelles des projets et photo de profil
+- [x] **Élément gauche** : puce électronique procédurale (die orange pulsant, pattes, pistes) — décision actée après itérations (réseau de neurones puis cerveau+puce abandonnés, jugés peu lisibles/moches). Composition « bookend » bras (droite) / puce (gauche) encadrant le nom, cadrage proportionnel FOV vérifié 1280–1920px.
+- [x] Cercle photo hero agrandi (`clamp(180px, 17vw, 240px)`), prêt à recevoir la vraie photo
+- [ ] **Photo de profil réelle** — placeholder `[ photo ]` dans `.hero-photo` (index.html), à remplacer
+- [ ] Photos réelles des 3 projets (actuellement placeholders SVG dans `index.html` et `projets.html`)
+- [ ] **Couche WOW v2 (optionnelle, en pause)** : photo détourée d'Enzo en fond, bras robotique « posé » dans une main + réseau de neurones dans l'autre. Idée mise de côté au profit de la puce seule, mais la hiérarchie de pivots du bras reste prête pour un repositionnement dans une main si l'idée est reprise.
+- [ ] Liens GitLab / GitHub (non prioritaire)
+
+## Outils / Skills Claude Code
+
+- **`ui-ux-pro-max`** (`.claude/skills/`) : skill de design intelligence (styles, palettes, typographies, guidelines UX). S'active sur les demandes de type "améliore/conçois/vérifie l'UI". Respecter quand même les règles du design system ci-dessus — le skill propose, le design system fixé dans ce fichier tranche.
+- **`hero3d-visual-check`** (`.claude/skills/`) : workflow de capture d'écran headless (Chromium + SwiftShader) pour juger visuellement un changement sur la couche 3D du hero (`hero3d.js`) avant de pousser. À utiliser systématiquement avant de commit un ajustement de position/cadrage/matériaux sur le bras ou la puce.
+- **`.claude/settings.json`** : allowlist de permissions pour les commandes read-only courantes (git status/diff/log, ls, lecture de fichiers du repo) — réduit les prompts de confirmation en session.
 
 ## Équipe projet (mode de travail collaboratif)
 

@@ -56,6 +56,30 @@ a { text-decoration: none; color: inherit; }
 ul { list-style: none; }
 img { max-width: 100%; display: block; }
 
+/* ---------- ACCESSIBILITÉ : focus clavier ---------- */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+.nav-cta:focus-visible { outline-offset: 2px; }
+.tl-dot:focus-visible, .ci-icon:focus-visible { outline-offset: 4px; }
+
+.skip-link {
+  position: absolute;
+  top: -48px; left: var(--s2);
+  z-index: 200;
+  background: var(--accent);
+  color: var(--bg);
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 14px;
+  transition: top var(--transition);
+}
+.skip-link:focus { top: var(--s2); }
+
 /* grille blueprint de fond, discrète — densifiée vers le haut, s'estompe vers le bas */
 body::before {
   content: '';
@@ -116,7 +140,7 @@ body::before {
   border-radius: 2px;
 }
 .nav-cta {
-  padding: 8px 18px;
+  padding: 12px 18px;
   border: 1px solid var(--accent) !important;
   border-radius: var(--radius-sm);
   color: var(--accent) !important;
@@ -243,7 +267,8 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
 .hero-3d canvas { display: block; width: 100%; height: 100%; }
 .hero-inner { position: relative; z-index: 2; }
 .hero-photo {
-  width: 150px; height: 150px;
+  width: clamp(180px, 17vw, 240px);
+  height: clamp(180px, 17vw, 240px);
   border-radius: 50%;
   margin: 0 auto var(--s4);
   border: 2px solid var(--accent);
@@ -252,7 +277,7 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  box-shadow: 0 0 40px rgba(255, 140, 26, 0.2);
+  box-shadow: 0 0 50px rgba(255, 140, 26, 0.25);
 }
 .hero-photo img { width: 100%; height: 100%; object-fit: cover; }
 .hero-photo .ph { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
@@ -291,7 +316,7 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
   transition: all var(--transition);
 }
 .pilier:hover { border-color: var(--border-hover); transform: translateY(-3px); }
-.pilier-icon { font-size: 28px; margin-bottom: var(--s2); }
+.pilier-icon { color: var(--accent); margin-bottom: var(--s2); }
 .pilier h3 { font-size: 19px; font-weight: 600; margin-bottom: var(--s1); }
 .pilier p { font-size: 14px; color: var(--text-muted); }
 
