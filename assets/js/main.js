@@ -1,6 +1,10 @@
 // ===========================================================
 // ENZO LORANDI - PORTFOLIO
-// JS partagé (3 pages) - v1 statique
+// JS partagé (3 pages)
+//   - nav / burger / section active
+//   - couche WOW scroll : smooth scroll Lenis + révélations GSAP
+// Libs attendues en globaux (chargées avant ce fichier) :
+//   window.gsap, window.ScrollTrigger, window.Lenis
 // ===========================================================
 
 // ---------- NAV : fond au scroll ----------
@@ -49,24 +53,128 @@ if (sections.length && navItems.length) {
   sections.forEach(s => observer.observe(s));
 }
 
-// ---------- REVEAL au scroll ----------
-const revealEls = document.querySelectorAll('.pilier, .project-card, .skill-block, .xp-preview, .tl-item, .project-detail, .contact-item');
-revealEls.forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(24px)';
-  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-});
+// ===========================================================
+// COUCHE WOW SCROLL — Lenis (smooth) + GSAP/ScrollTrigger
+// ===========================================================
+(function initScrollMotion() {
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry, i) => {
-    if (entry.isIntersecting) {
-      setTimeout(() => {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
-      }, (i % 3) * 90);
-      revealObserver.unobserve(entry.target);
+  // Éléments révélés au scroll. IMPORTANT : ils restent visibles en CSS de
+  // base — c'est le JS qui les masque puis les révèle. Si le JS ne tourne
+  // pas (ou pas de GSAP), le contenu s'affiche normalement.
+  const REVEAL_SELECTOR = [
+    '.section-label', '.section h2', '.piliers-intro',
+    '.pilier', '.project-card', '.skill-block', '.xp-preview',
+    '.tl-item', '.project-detail', '.contact-text', '.contact-item',
+    '.page-header h1', '.page-header p'
+  ].join(', ');
+
+  const hasGSAP = window.gsap && window.ScrollTrigger;
+  if (!hasGSAP) return; // pas de lib -> contenu visible, aucune animation
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // --- Accessibilité : mouvement réduit -> aucune animation, aucun smooth
+  //     scroll. On ne masque rien : le contenu reste en état final. ---
+  if (prefersReduced) return;
+
+  const navHeight = parseInt(
+    getComputedStyle(document.documentElement).getPropertyValue('--nav-h'), 10
+  ) || 68;
+
+  // ---------- Smooth scroll inertiel (Lenis) ----------
+  let lenis = null;
+  if (window.Lenis) {
+    lenis = new Lenis({
+      duration: 1.1,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // expo out
+      smoothWheel: true,
+    });
+    // une seule horloge : le ticker gsap pilote Lenis
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+    // ScrollTrigger recalcule à chaque frame de scroll Lenis
+    lenis.on('scroll', ScrollTrigger.update);
+    window.__lenis = lenis; // exposé (debug / hero3d si besoin)
+
+    // ancres internes -> scroll fluide (respecte la hauteur de nav)
+    document.querySelectorAll('a[href^="#"]').forEach((a) => {
+      const href = a.getAttribute('href');
+      if (!href || href.length < 2) return; // ignore href="#"
+      a.addEventListener('click', (e) => {
+        const target = document.querySelector(href);
+        if (!target) return;
+        e.preventDefault();
+        lenis.scrollTo(target, { offset: -navHeight, duration: 1.2 });
+      });
+    });
+  }
+
+  // ---------- Révélations au scroll (batch, échelonnées) ----------
+  const revealEls = gsap.utils.toArray(REVEAL_SELECTOR);
+  if (revealEls.length) {
+    gsap.set(revealEls, { opacity: 0, y: 26 });
+    ScrollTrigger.batch(revealEls, {
+      start: 'top 88%',
+      onEnter: (batch) => gsap.to(batch, {
+        opacity: 1, y: 0,
+        duration: 0.8, stagger: 0.09, ease: 'power3.out', overwrite: true,
+      }),
+      once: true,
+    });
+  }
+
+  // ---------- Intro du hero au chargement (accueil) ----------
+  const heroInner = document.querySelector('.hero-inner');
+  if (heroInner) {
+    gsap.from(heroInner.children, {
+      opacity: 0, y: 30,
+      duration: 0.9, stagger: 0.12, ease: 'power3.out', delay: 0.15,
+    });
+  }
+
+  // ---------- Parallaxe + fondu du hero au scroll ----------
+  const hero = document.querySelector('.hero');
+  if (hero && heroInner) {
+    gsap.to(heroInner, {
+      yPercent: 16, opacity: 0.25, ease: 'none',
+      scrollTrigger: {
+        trigger: hero,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 0.4,
+      },
+    });
+  }
+
+  // ---------- Moment fort : manifeste pinné, mots qui s'illuminent ----------
+  const manifesto = document.querySelector('.manifesto');
+  if (manifesto) {
+    const words = manifesto.querySelectorAll('.word');
+    if (words.length) {
+      gsap.set(words, { opacity: 0.12 }); // en veille -> s'allument au scroll
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: manifesto,
+          start: 'top top',
+          end: '+=120%',
+          pin: true,
+          scrub: 0.5,
+        },
+      }).to(words, { opacity: 1, stagger: 0.4, ease: 'none' });
     }
-  });
-}, { threshold: 0.12 });
+  }
 
-revealEls.forEach(el => revealObserver.observe(el));
+  // ---------- Barre de progression de scroll (charte orange) ----------
+  const bar = document.createElement('div');
+  bar.className = 'scroll-progress';
+  bar.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(bar);
+  gsap.to(bar, {
+    scaleX: 1, ease: 'none',
+    scrollTrigger: { start: 0, end: 'max', scrub: 0.3 },
+  });
+
+  // ---------- Recalage après chargement images/fonts ----------
+  window.addEventListener('load', () => ScrollTrigger.refresh());
+})();
