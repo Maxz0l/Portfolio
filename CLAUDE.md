@@ -23,9 +23,12 @@ Objectif du site : convaincre un recruteur (labo, startup ou grand groupe indust
 ├── experiences.html    # Timeline parcours (RATP, Padoue, CPE)
 └── assets/
     ├── css/style.css        # TOUT le design system + styles partagés (fichier unique)
-    ├── js/main.js           # JS partagé 3 pages (nav, scroll, reveal)
+    ├── js/main.js           # JS partagé 3 pages (nav, scroll, reveal, smooth scroll Lenis + GSAP)
     ├── js/hero3d.js         # Module ES, accueil uniquement : bras robotique 3D (Three.js)
-    ├── vendor/three.module.js # Three.js hébergé en local (pas de CDN)
+    ├── vendor/three.module.js   # Three.js hébergé en local (pas de CDN)
+    ├── vendor/gsap.min.js       # GSAP 3.15 (moteur d'animation) — global `gsap`
+    ├── vendor/ScrollTrigger.min.js # Plugin scroll GSAP — global `ScrollTrigger`
+    ├── vendor/lenis.min.js      # Lenis 1.3 (smooth scroll inertiel) — global `Lenis`
     └── img/                 # Images (favicon, og-image, photos projets, photo perso à venir)
 ```
 
@@ -35,6 +38,7 @@ Objectif du site : convaincre un recruteur (labo, startup ou grand groupe indust
 - **CSS unique et partagé** : un seul `style.css`. Le design reste centralisé.
 - **JS** : `main.js` partagé sur les 3 pages (nav, scroll, reveal). Exception assumée : `hero3d.js`, module ES chargé **uniquement sur l'accueil** pour la couche WOW 3D — séparé pour ne pas charger Three.js (~1,2 Mo) sur les pages où il est inutile.
 - **Three.js hébergé en local** (`assets/vendor/three.module.js`) via import map, pas de CDN externe — robustesse et conformité « pas de dépendance build ».
+- **Librairies d'animation hébergées en local** (`assets/vendor/gsap.min.js`, `ScrollTrigger.min.js`, `lenis.min.js`) en builds UMD (globaux), chargées via `<script>` classiques **avant `main.js`** (ordre : gsap → ScrollTrigger → lenis → main.js). Pas de CDN, pas de build. `main.js` reste un script classique et consomme les globaux ; seul `hero3d.js` est un module ES. Voir le skill `scroll-motion` pour l'intégration Lenis↔ScrollTrigger.
 - **Navigation** : nav fixe identique partout. Depuis les pages détail, les liens pointent vers `index.html#section`. La page active porte la classe `.active`.
 
 ## Design system (NE PAS dévier sans validation)
@@ -65,6 +69,16 @@ L'orange est réservé aux **accents** : liens, boutons, hovers, titres clés, l
 - Glow orange léger au hover des cartes
 - Bordures qui s'illuminent en orange au survol (`--border-hover`)
 - **Important** : le profil vise aussi des grands groupes conservateurs. L'élégance prime sur l'effet. Pas de surcharge néon.
+
+### Motion / Animation de scroll — « wow élégant » (décision actée)
+Stack : **GSAP + ScrollTrigger + Lenis** (smooth scroll inertiel), vendorisés en local. Objectif : un défilement organique et fluide qui *révèle* le contenu, sans jamais le noyer. Débat conseil tranché par Enzo : intensité **wow élégant au service du contenu** (ni sobre-minimal, ni démo Awwwards).
+
+Principes (garde-fous, cf. skill `scroll-motion`) :
+- **Un effet = une intention** : chaque animation doit révéler ou hiérarchiser un contenu. Si on ne sait pas dire ce qu'elle apporte, on ne la met pas.
+- **Lisibilité en 30 s** : un recruteur (y compris Thales/Alstom/Siemens) doit tout comprendre même en scrollant vite. Le contenu reste lisible sans JS (ne jamais masquer en CSS de base).
+- **Perf** : animer uniquement `transform`/`opacity`. Attention : le hero charge déjà Three.js (~1,2 Mo).
+- **Accessibilité** : `prefers-reduced-motion` → pas de Lenis, révélations en état final immédiat (même logique que le hero 3D).
+- **Sobriété** : un seul « moment fort » pinné sur tout le site, parallaxe subtile (5–15 %), pas de curseur custom ni de transitions plein écran gratuites.
 
 ## Contenu — informations validées (source de vérité)
 
@@ -114,6 +128,9 @@ L'orange est réservé aux **accents** : liens, boutons, hovers, titres clés, l
   - Fallback : désactivé sur mobile, `prefers-reduced-motion` et sans WebGL ; rendu en pause hors écran
 - [x] **Élément gauche** : puce électronique procédurale (die orange pulsant, pattes, pistes) — décision actée après itérations (réseau de neurones puis cerveau+puce abandonnés, jugés peu lisibles/moches). Composition « bookend » bras (droite) / puce (gauche) encadrant le nom, cadrage proportionnel FOV vérifié 1280–1920px.
 - [x] Cercle photo hero agrandi (`clamp(180px, 17vw, 240px)`), prêt à recevoir la vraie photo
+- [x] Accessibilité : focus clavier (`:focus-visible`), lien d'évitement, icônes SVG (remplacement emojis), cible tactile nav
+- [x] **Environnement scroll-motion** : GSAP + ScrollTrigger + Lenis vendorisés, skill `scroll-motion` + `REFERENCES.md`, design system motion documenté
+- [ ] **Couche WOW scroll v1** : smooth scroll Lenis + révélations organiques au scroll (piliers, cartes, skills, timeline) + 1 moment fort pinné — à implémenter dans `main.js` via le skill `scroll-motion`
 - [ ] **Photo de profil réelle** — placeholder `[ photo ]` dans `.hero-photo` (index.html), à remplacer
 - [ ] Photos réelles des 3 projets (actuellement placeholders SVG dans `index.html` et `projets.html`)
 - [ ] **Couche WOW v2 (optionnelle, en pause)** : photo détourée d'Enzo en fond, bras robotique « posé » dans une main + réseau de neurones dans l'autre. Idée mise de côté au profit de la puce seule, mais la hiérarchie de pivots du bras reste prête pour un repositionnement dans une main si l'idée est reprise.
@@ -122,12 +139,39 @@ L'orange est réservé aux **accents** : liens, boutons, hovers, titres clés, l
 ## Outils / Skills Claude Code
 
 - **`ui-ux-pro-max`** (`.claude/skills/`) : skill de design intelligence (styles, palettes, typographies, guidelines UX). S'active sur les demandes de type "améliore/conçois/vérifie l'UI". Respecter quand même les règles du design system ci-dessus — le skill propose, le design system fixé dans ce fichier tranche.
-- **`hero3d-visual-check`** (`.claude/skills/`) : workflow de capture d'écran headless (Chromium + SwiftShader) pour juger visuellement un changement sur la couche 3D du hero (`hero3d.js`) avant de pousser. À utiliser systématiquement avant de commit un ajustement de position/cadrage/matériaux sur le bras ou la puce.
+- **`hero3d-visual-check`** (`.claude/skills/`) : workflow de capture d'écran headless (Chromium + SwiftShader) pour juger visuellement un changement sur la couche 3D du hero (`hero3d.js`) avant de pousser. À utiliser systématiquement avant de commit un ajustement de position/cadrage/matériaux sur le bras ou la puce. Sert aussi à capturer le scroll à plusieurs positions.
+- **`scroll-motion`** (`.claude/skills/`) : patterns et intégration des animations de scroll « wow élégant » (GSAP + ScrollTrigger + Lenis vendorisés). Ordre de chargement, câblage Lenis↔ScrollTrigger↔hero3d, patterns (révélations, parallaxe, pinning), règles de perf et fallback reduced-motion. `REFERENCES.md` liste les sources d'effets prêts à adapter (Osmo, Codrops, démos GSAP, exemples Lenis).
 - **`.claude/settings.json`** : allowlist de permissions pour les commandes read-only courantes (git status/diff/log, ls, lecture de fichiers du repo) — réduit les prompts de confirmation en session.
 
 ## Équipe projet (mode de travail collaboratif)
 
-Ce projet se construit avec une **équipe d'agents virtuels**, chacun avec une expertise et un point de vue propres. Enzo est le **chef de projet** : il décide, les agents conseillent et se challengent entre eux. Quand un sujet est pertinent (décision structurante, choix de design, arbitrage), fais discuter les agents concernés AVANT de coder, en faisant ressortir les désaccords et les compromis. Ne te contente pas d'un avis unanime de façade : la valeur vient du débat.
+Ce projet se construit avec une **équipe d'experts**, chacun avec une expertise et un point de vue propres. Enzo est le **chef de projet** : il décide, les experts conseillent et se challengent. Ne te contente pas d'un avis unanime de façade : la valeur vient du débat.
+
+Ces personas existent désormais sous **deux formes complémentaires** — bien comprendre la différence :
+
+- **(a) Débat orchestré dans le thread principal** (roleplay) : pour une **décision** rapide (choix de design, arbitrage, orientation), tu fais parler les personas concernés directement dans la conversation, tu fais ressortir désaccords et compromis, tu proposes une synthèse, Enzo tranche. C'est léger, immédiat, partage le contexte de la discussion en cours. Limite : c'est *toi* (l'orchestrateur) qui incarnes tous les rôles dans un seul contexte — pas d'indépendance réelle, biais possible vers le consensus.
+
+- **(b) Sous-agents réels `.claude/agents/*.md`** : pour un **audit en profondeur**, tu convoques l'expert comme un véritable sous-agent (via le tool Agent / `subagent_type`). Différence de fond avec le roleplay :
+  - **Contexte isolé** : le sous-agent démarre avec sa propre fenêtre de contexte et son system prompt. Il n'est pas pollué par le fil de la conversation ni par les autres avis — il regarde le code avec un œil neuf.
+  - **Pas de cross-talk** : les sous-agents ne se parlent pas entre eux. Chacun analyse et **remonte un rapport structuré à l'orchestrateur**, qui seul fait la synthèse. Ça évite l'alignement grégaire (un agent qui se range à l'avis d'un autre).
+  - **Lecture seule** : ce sont des auditeurs (tools `Read, Grep, Glob`, + `WebSearch/WebFetch` pour Nina et Élise). Ils ne modifient rien — l'implémentation reste orchestrée dans le thread principal.
+  - **Modèle par rôle** : analyses lourdes en modèle fort, revues mécaniques en modèle rapide (voir table).
+
+Règle de choix : **débat orchestré** pour décider vite pendant qu'on code ; **sous-agents** quand on veut un audit indépendant et fouillé (revue avant push, verdict recruteur, audit perf/archi, revue esthétique de la couche 3D).
+
+### Table des sous-agents
+
+| Persona | Fichier | Modèle | Pourquoi ce modèle | Web |
+|---|---|---|---|---|
+| Tom — Architecte | `tom-archi.md` | opus | décisions structurantes coûteuses à défaire = analyse lourde | non |
+| Kenji — DA 3D/Motion | `kenji-3d.md` | opus | jugement esthétique + technique 3D nuancé = analyse lourde | non |
+| Sara — UX | `sara-ux.md` | sonnet | raisonnement sur les parcours, équilibré | non |
+| Léa — Front/Perf | `lea-front.md` | sonnet | évaluation de risques perf/faisabilité, équilibré | non |
+| Nina — Contenu | `nina-contenu.md` | sonnet | nuance de langue et de ton | oui |
+| Élise — RH | `elise-rh.md` | sonnet | jugement recruteur holistique | oui |
+| Marc — UI | `marc-ui.md` | haiku | conformité design system = vérification mécanique (rapide/économe) | non |
+
+**Promotion possible plus tard** : Léa, Kenji et Marc sont les candidats naturels pour être un jour « promus » en **implémenteurs** (ajout de `Edit/Write`, voire `Bash` pour Léa) — Léa corrigerait directement du code/perf, Kenji réglerait les paramètres d'animation de `hero3d.js`/`main.js`, Marc corrigerait les écarts de charte dans le CSS. **On ne le fait pas d'emblée** volontairement : garder l'implémentation centralisée dans le thread principal donne un seul point de contrôle (revue humaine au niveau de l'orchestrateur), évite que plusieurs agents fassent des éditions concurrentes/conflictuelles, et rend les auditeurs incapables d'abîmer le repo. On promeut un agent en implémenteur seulement quand le besoin d'édition autonome dépasse ce coût de contrôle.
 
 ### Les agents
 
