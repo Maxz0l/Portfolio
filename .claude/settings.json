@@ -17,9 +17,25 @@
       "Bash(find:*)",
       "Bash(du:*)",
       "Bash(python3 -m http.server:*)",
-      "Read(//home/user/Portfolio/**)",
+      "Bash(python -m http.server:*)",
+      "Bash(py -m http.server:*)",
+      "Read(/**)",
       "Glob",
       "Grep"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/check-nav-consistency.sh\"",
+            "timeout": 15
+          }
+        ]
+      }
     ]
   }
 }

@@ -145,7 +145,33 @@ Principes (garde-fous, cf. skill `scroll-motion`) :
 
 ## Équipe projet (mode de travail collaboratif)
 
-Ce projet se construit avec une **équipe d'agents virtuels**, chacun avec une expertise et un point de vue propres. Enzo est le **chef de projet** : il décide, les agents conseillent et se challengent entre eux. Quand un sujet est pertinent (décision structurante, choix de design, arbitrage), fais discuter les agents concernés AVANT de coder, en faisant ressortir les désaccords et les compromis. Ne te contente pas d'un avis unanime de façade : la valeur vient du débat.
+Ce projet se construit avec une **équipe d'experts**, chacun avec une expertise et un point de vue propres. Enzo est le **chef de projet** : il décide, les experts conseillent et se challengent. Ne te contente pas d'un avis unanime de façade : la valeur vient du débat.
+
+Ces personas existent désormais sous **deux formes complémentaires** — bien comprendre la différence :
+
+- **(a) Débat orchestré dans le thread principal** (roleplay) : pour une **décision** rapide (choix de design, arbitrage, orientation), tu fais parler les personas concernés directement dans la conversation, tu fais ressortir désaccords et compromis, tu proposes une synthèse, Enzo tranche. C'est léger, immédiat, partage le contexte de la discussion en cours. Limite : c'est *toi* (l'orchestrateur) qui incarnes tous les rôles dans un seul contexte — pas d'indépendance réelle, biais possible vers le consensus.
+
+- **(b) Sous-agents réels `.claude/agents/*.md`** : pour un **audit en profondeur**, tu convoques l'expert comme un véritable sous-agent (via le tool Agent / `subagent_type`). Différence de fond avec le roleplay :
+  - **Contexte isolé** : le sous-agent démarre avec sa propre fenêtre de contexte et son system prompt. Il n'est pas pollué par le fil de la conversation ni par les autres avis — il regarde le code avec un œil neuf.
+  - **Pas de cross-talk** : les sous-agents ne se parlent pas entre eux. Chacun analyse et **remonte un rapport structuré à l'orchestrateur**, qui seul fait la synthèse. Ça évite l'alignement grégaire (un agent qui se range à l'avis d'un autre).
+  - **Lecture seule** : ce sont des auditeurs (tools `Read, Grep, Glob`, + `WebSearch/WebFetch` pour Nina et Élise). Ils ne modifient rien — l'implémentation reste orchestrée dans le thread principal.
+  - **Modèle par rôle** : analyses lourdes en modèle fort, revues mécaniques en modèle rapide (voir table).
+
+Règle de choix : **débat orchestré** pour décider vite pendant qu'on code ; **sous-agents** quand on veut un audit indépendant et fouillé (revue avant push, verdict recruteur, audit perf/archi, revue esthétique de la couche 3D).
+
+### Table des sous-agents
+
+| Persona | Fichier | Modèle | Pourquoi ce modèle | Web |
+|---|---|---|---|---|
+| Tom — Architecte | `tom-archi.md` | opus | décisions structurantes coûteuses à défaire = analyse lourde | non |
+| Kenji — DA 3D/Motion | `kenji-3d.md` | opus | jugement esthétique + technique 3D nuancé = analyse lourde | non |
+| Sara — UX | `sara-ux.md` | sonnet | raisonnement sur les parcours, équilibré | non |
+| Léa — Front/Perf | `lea-front.md` | sonnet | évaluation de risques perf/faisabilité, équilibré | non |
+| Nina — Contenu | `nina-contenu.md` | sonnet | nuance de langue et de ton | oui |
+| Élise — RH | `elise-rh.md` | sonnet | jugement recruteur holistique | oui |
+| Marc — UI | `marc-ui.md` | haiku | conformité design system = vérification mécanique (rapide/économe) | non |
+
+**Promotion possible plus tard** : Léa, Kenji et Marc sont les candidats naturels pour être un jour « promus » en **implémenteurs** (ajout de `Edit/Write`, voire `Bash` pour Léa) — Léa corrigerait directement du code/perf, Kenji réglerait les paramètres d'animation de `hero3d.js`/`main.js`, Marc corrigerait les écarts de charte dans le CSS. **On ne le fait pas d'emblée** volontairement : garder l'implémentation centralisée dans le thread principal donne un seul point de contrôle (revue humaine au niveau de l'orchestrateur), évite que plusieurs agents fassent des éditions concurrentes/conflictuelles, et rend les auditeurs incapables d'abîmer le repo. On promeut un agent en implémenteur seulement quand le besoin d'édition autonome dépasse ce coût de contrôle.
 
 ### Les agents
 
