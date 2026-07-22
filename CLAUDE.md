@@ -4,9 +4,9 @@ Ce fichier guide Claude Code dans le développement de ce projet. Lis-le entièr
 
 ## Vue d'ensemble
 
-Portfolio personnel d'**Enzo Lorandi**, ingénieur ETI (CPE Lyon) spécialisé en **robotique de service**, à la recherche d'un **PFE en robotique / IA / sciences du numérique pour 2026**.
+Portfolio personnel d'**Enzo Lorandi**, ingénieur ETI (CPE Lyon) spécialisé en **robotique de service**, à la recherche d'un **PFE en robotique / IA / sciences du numérique à partir de octobre 2026**.
 
-Objectif du site : convaincre un recruteur (labo, startup ou grand groupe industriel type Alstom/Thales/Siemens Mobility) de proposer un PFE. Le profil est différenciant et doit être assumé, pas dilué.
+Objectif du site : convaincre un recruteur (labo, startup ou grand groupe industriel) de proposer un PFE. Le profil est différenciant et doit être assumé, pas dilué.
 
 ## Stack technique
 
@@ -70,13 +70,13 @@ L'orange est réservé aux **accents** : liens, boutons, hovers, titres clés, l
 
 ### Identité
 - Nom : Enzo Lorandi
-- Accroche : "Robotique · IA · Sciences du numérique"
-- Objectif : PFE en robotique, 2026
+- Accroche : "Robotique · IA · Sciences du numérique" (à retravailler pour être le plus générique possible, le cv sert à ciblé la personne, le portefolio a pour objectif de montrer mon profil complet et faire un effet WOW)
+- Objectif : PFE en robotique ou autre chose qui est en rapport avec ma formation initiale (CPE Lyon ETI), 2026
 
 ### Expérience (page experiences, timeline du + récent au + ancien)
-1. **RATP** (Mars–Sept 2026) — Assistant Coordinateur Technique Systèmes, via IKOS Consulting. Implémentation du MF19, lignes 3bis/7bis/10. Signalisation, traction, interfaces voie/GC. NB : mettre RATP en avant, IKOS en sous-ligne.
-2. **Università di Padova** (Sept 2025–Fév 2026) — Échange robotique : robotique industrielle, intelligente, neurorobotique, learning from networks.
-3. **CPE Lyon** (Sept 2022–Juin 2026) — Diplôme ingénieur ETI, spécialisation Robotique de Service.
+1. **RATP** (Mars–Sept 2026) — Coordinateur Technique Systèmes, via IKOS Consulting. Implémentation du MF19, lignes 3bis/7bis/10. Interfacage entre les différents MOE : Signalisation, traction, voie, GC, BT, PAE... et les exploitants: maintenance des train et exploitation classique. NB : mettre RATP en avant, IKOS en sous-ligne.
+2. **Università di Padova** (Sept 2025–Fév 2026) — Échange robotique : robotique industrielle, intelligente, neurorobotique.
+3. **CPE Lyon** (2022–2026) — Diplôme ingénieur ETI, spécialisation Robotique de Service.
 
 > Note : la mission RATP est le stage élève ingénieur (validation école). Le PFE est encore à trouver — c'est l'objectif du site.
 
