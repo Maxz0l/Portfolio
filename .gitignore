@@ -17,3 +17,35 @@ package-lock.json
 # Python (skill ui-ux-pro-max)
 __pycache__/
 *.pyc
+
+# ---------------------------------------------------------------------------
+# Images sources (originaux lourds + non destinés à la publication)
+# ---------------------------------------------------------------------------
+# ATTENTION : tout fichier commité est publiquement téléchargeable via GitHub
+# Pages, même s'il n'est référencé par aucune page. Les originaux restent donc
+# en local et seules les versions dérivées et recadrées sont publiées.
+# « Robot doseur.jpeg » en particulier montre les camarades d'Enzo de façon
+# identifiable : ne jamais le commiter (droit à l'image).
+assets/img/Robot doseur.jpeg
+assets/img/Lockwise image machine.png
+assets/img/LORANDI-Enzo.jpg
+assets/img/PROJET_CI_GrC5.jpg
+
+# Supports de cours / PPT exportés (sources de travail, pas du contenu publié)
+assets/Projets école PDF (ppt)/
+
+# ---------------------------------------------------------------------------
+# Documents bureautiques — POLITIQUE, pas liste nominative
+# ---------------------------------------------------------------------------
+# Ces fichiers sont des supports de travail : supports de cours, présentations
+# internes, trames client. Ils contiennent régulièrement des données de tiers
+# (parcours de collègues, noms, documents internes d'entreprise) et n'ont
+# aucune raison d'être servis par GitHub Pages. Règle par extension plutôt que
+# par nom : un fichier déposé demain est protégé sans qu'on ait à y penser.
+*.pptx
+*.ppt
+*.docx
+*.doc
+*.xlsx
+*.xls
+~$*

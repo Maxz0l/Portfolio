@@ -3,20 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Projets — Enzo Lorandi</title>
-<meta name="description" content="Les projets robotiques et embarqués d'Enzo Lorandi : LockWise, Robonbon, Robot Doseur.">
+<title>Projets - Enzo Lorandi</title>
+<meta name="description" content="Les projets robotiques et embarqués d'Enzo Lorandi : navigation ROS 2, manipulation UR5 / MoveIt!, décodage BCI, LockWise, Robonbon, Robot Doseur, VHDL sur FPGA.">
 <link rel="canonical" href="https://maxz0l.github.io/Portfolio/projets.html">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Projets — Enzo Lorandi">
-<meta property="og:description" content="Trois systèmes robotiques menés du capteur à l'IA : LockWise, Robonbon, Robot Doseur.">
+<meta property="og:title" content="Projets - Enzo Lorandi">
+<meta property="og:description" content="Sept projets menés du capteur à l'IA : robotique ROS 2, décodage BCI, systèmes embarqués, électronique analogique et VHDL sur FPGA.">
 <meta property="og:url" content="https://maxz0l.github.io/Portfolio/projets.html">
 <meta property="og:image" content="https://maxz0l.github.io/Portfolio/assets/img/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="fr_FR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Projets — Enzo Lorandi">
-<meta name="twitter:description" content="Trois systèmes robotiques menés du capteur à l'IA : LockWise, Robonbon, Robot Doseur.">
+<meta name="twitter:title" content="Projets - Enzo Lorandi">
+<meta name="twitter:description" content="Sept projets menés du capteur à l'IA : robotique ROS 2, décodage BCI, systèmes embarqués, électronique analogique et VHDL sur FPGA.">
 <meta name="twitter:image" content="https://maxz0l.github.io/Portfolio/assets/img/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,19 +43,16 @@
 <header class="page-header" id="main">
   <div class="container">
     <div class="section-label">Projets</div>
-    <h1>Mes <span style="color:var(--accent)">projets</span></h1>
-    <p>Trois systèmes robotiques menés de la conception matérielle à l'intelligence logicielle. Pour chacun, mon rôle précis au sein de l'équipe.</p>
+    <h1>Mes <span class="accent">projets</span></h1>
+    <p>Sept projets menés de la conception matérielle à l'intelligence logicielle : robotique mobile et manipulation sous ROS 2, décodage de signaux cérébraux, systèmes embarqués, électronique analogique et numérique. Pour chacun, mon rôle précis.</p>
   </div>
 </header>
 
 <main class="container" style="padding-bottom: var(--s7);">
 
   <article class="project-detail" id="lockwise">
-    <div class="pd-media">
-      <div class="ph">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        Photo / schéma LockWise
-      </div>
+    <div class="pd-media is-figure">
+      <img src="assets/img/lockwise-schema.jpg" alt="Le casier LockWise en fonctionnement, avec ses composants annotés : lecteur RFID, écran, boutons de choix, vérin de blocage, reed switch, capteur infrarouge et microcontrôleur STM32" loading="lazy" width="736" height="577">
     </div>
     <div class="pd-body">
       <span class="tag">// Système embarqué</span>
@@ -73,7 +70,7 @@
         <ul class="pd-role-list">
           <li>Driver RFID bas niveau (MFRC522 via SPI)</li>
           <li>Capteurs infrarouges + Reed switch (présence clé, fermeture porte)</li>
-          <li>Pilotage des actionneurs — 3 serrures via pont en H 12V</li>
+          <li>Pilotage des actionneurs - 3 serrures via pont en H 12V</li>
           <li>Machine à états finis (FSM) embarquée du scénario complet</li>
           <li>Design et fabrication du boîtier</li>
         </ul>
@@ -92,12 +89,159 @@
     </div>
   </article>
 
+  <article class="project-detail" id="neurorobotique">
+    <div class="pd-media">
+      <img src="assets/img/neurorobotics.jpg" alt="Topographies ERD/ERS de la population sur les bandes mu, pour l'imagerie motrice des mains et des pieds" loading="lazy" width="1084" height="318">
+    </div>
+    <div class="pd-body">
+      <span class="tag">// Neurorobotique</span>
+      <h2>Décodage d'intentions motrices (BCI)</h2>
+      <p class="pd-tagline">Traduire un signal EEG en commande, de la donnée brute à la décision.</p>
+      <div class="pd-meta-row">
+        <span>Università di Padova</span><span>Projet individuel</span><span>MATLAB · EEG / BCI</span>
+      </div>
+      <div class="pd-section">
+        <h4>Contexte</h4>
+        <p>Analyse d'une expérience d'imagerie motrice menée sur 3 jours et 8 sujets. L'enjeu : reconnaître dans l'EEG l'intention de bouger les mains ou les pieds, puis transformer cette reconnaissance en commande fiable - un classifieur qui décide à chaque échantillon serait trop instable pour piloter quoi que ce soit.</p>
+      </div>
+      <div class="pd-section">
+        <h4>Mon périmètre</h4>
+        <ul class="pd-role-list">
+          <li>Traitement du signal - spectrogrammes, filtrage spatial (CAR, Laplacien), band power</li>
+          <li>Analyse population - carte de Fisher, topographies ERD/ERS sur les bandes mu et beta</li>
+          <li>Décodeur par sujet - sélection de features discriminantes + classifieur calibré</li>
+          <li>Évaluation en ligne par accumulation d'évidence jusqu'à un seuil de décision</li>
+          <li>Chaîne de traitement temps réel sous ROS-Neuro</li>
+          <li>Bibliothèque de fonctions réutilisables et rapport d'analyse</li>
+        </ul>
+      </div>
+      <div class="pd-section">
+        <h4>Stack technique</h4>
+        <div class="tag-row">
+          <span class="pill-accent">MATLAB</span>
+          <span class="pill">EEGLAB</span>
+          <span class="pill">BioSig</span>
+          <span class="pill">ROS-Neuro</span>
+          <span class="pill">Traitement du signal</span>
+          <span class="pill">Classification</span>
+        </div>
+      </div>
+      <a href="https://github.com/Maxz0l/neurorobotics" target="_blank" rel="noopener" class="btn-link">Voir le code sur GitHub →</a>
+    </div>
+  </article>
+
+  <article class="project-detail" id="turtlebot">
+    <div class="pd-media">
+      <a class="video-embed" data-video-id="XyFvxgqdXcs"
+         href="https://youtu.be/XyFvxgqdXcs"
+         target="_blank" rel="noopener"
+         aria-label="Voir la démo vidéo de la navigation autonome TurtleBot3">
+        <img src="assets/img/turtlebot-card.jpg" alt="" loading="lazy" width="784" height="404">
+        <span class="video-play" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+        <span class="video-label">Voir la démo</span>
+      </a>
+    </div>
+    <div class="pd-body">
+      <span class="tag">// ROS 2 · Navigation autonome</span>
+      <h2>TurtleBot3 - Navigation guidée par vision</h2>
+      <p class="pd-tagline">Rejoindre une cible repérée par marqueurs, puis cartographier son environnement au LiDAR.</p>
+      <div class="pd-meta-row">
+        <span>Università di Padova</span><span>Projet individuel</span><span>ROS 2 Humble · Gazebo · TF2</span>
+      </div>
+      <div class="pd-section">
+        <h4>Contexte</h4>
+        <p>Le robot doit repérer deux marqueurs AprilTag, rejoindre leur point médian sans heurter d'obstacle, puis détecter les tables cylindriques autour de lui au LiDAR et publier leur position dans le repère monde.</p>
+      </div>
+      <div class="pd-section">
+        <h4>Mon périmètre</h4>
+        <ul class="pd-role-list">
+          <li>Choix d'une architecture hybride délibératif/réactif (Arkin, Brooks) plutôt qu'un Bug2 ou un A* : le robot avance toujours, les corrections de cap et la répulsion d'obstacle s'additionnent</li>
+          <li>4 nœuds ROS 2 - détection de tags, navigation, détection de tables, agrégation</li>
+          <li>Localisation du but via TF2 dans le repère odom, stable quel que soit le mouvement du robot</li>
+          <li>4 couches de priorité - couloir, urgence, réactif, délibératif</li>
+          <li>Détection de cylindres - segmentation du scan, filtrage par nombre de rayons / ratio / diamètre, et correction du centre (le LiDAR ne voit que la face avant)</li>
+          <li>Stabilisation des mesures par clustering sur une fenêtre glissante de 50 scans</li>
+        </ul>
+      </div>
+      <div class="pd-section">
+        <h4>Stack technique</h4>
+        <div class="tag-row">
+          <span class="pill-accent">ROS 2 Humble</span>
+          <span class="pill">Python</span>
+          <span class="pill">Gazebo</span>
+          <span class="pill">TF2</span>
+          <span class="pill">LiDAR</span>
+          <span class="pill">AprilTag</span>
+        </div>
+      </div>
+      <a href="https://github.com/Maxz0l/lorandi_assignement_1" target="_blank" rel="noopener" class="btn-link">Voir le code sur GitHub →</a>
+    </div>
+  </article>
+
+  <article class="project-detail" id="ur5">
+    <div class="pd-media">
+      <a class="video-embed" data-video-id="ha9ZuNDaH0M"
+         href="https://youtu.be/ha9ZuNDaH0M"
+         target="_blank" rel="noopener"
+         aria-label="Voir la démo vidéo de l'échange de cubes par bras UR5">
+        <img src="assets/img/ur5-card.jpg" alt="" loading="lazy" width="784" height="404">
+        <span class="video-play" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+        <span class="video-label">Voir la démo</span>
+      </a>
+    </div>
+    <div class="pd-body">
+      <span class="tag">// ROS 2 · Manipulation</span>
+      <h2>UR5 + MoveIt! - Échange de cubes guidé par vision</h2>
+      <p class="pd-tagline">Un bras industriel qui localise, saisit et repose deux objets sans emplacement tampon.</p>
+      <div class="pd-meta-row">
+        <span>Università di Padova</span><span>Projet individuel</span><span>ROS 2 · MoveIt! 2 · UR5</span>
+      </div>
+      <div class="pd-section">
+        <h4>Contexte</h4>
+        <p>Un bras UR5 équipé d'une pince Robotiq 85 doit intervertir deux cubes identifiés par AprilTag, observés par une caméra RGB fixe, puis revenir en position de repos. La contrainte intéressante : réaliser l'échange en deux mouvements, sans zone de dépôt intermédiaire.</p>
+      </div>
+      <div class="pd-section">
+        <h4>Mon périmètre</h4>
+        <ul class="pd-role-list">
+          <li>Architecture en 4 nœuds ROS 2 indépendants, communiquant uniquement par topics et arbre TF</li>
+          <li>Conversion des détections AprilTag en poses de cubes dans le repère monde, avec calibration par tag</li>
+          <li>Machine à états du pick-and-place et séquence d'échange</li>
+          <li>Planification MoveIt! 2 - cinématique inverse, chemins cartésiens, scène de planification cohérente (attach/detach)</li>
+          <li>Mise en service du contrôleur de pince à l'exécution</li>
+          <li>Détection de couleur des cubes par projection dans l'image (OpenCV)</li>
+        </ul>
+      </div>
+      <div class="pd-section">
+        <h4>Stack technique</h4>
+        <div class="tag-row">
+          <span class="pill-accent">MoveIt! 2</span>
+          <span class="pill">ROS 2</span>
+          <span class="pill">UR5 · Robotiq 85</span>
+          <span class="pill">ros2_control</span>
+          <span class="pill">OpenCV</span>
+          <span class="pill">Gazebo</span>
+        </div>
+      </div>
+      <a href="https://github.com/Maxz0l/lorandi_assignment_2" target="_blank" rel="noopener" class="btn-link">Voir le code sur GitHub →</a>
+    </div>
+  </article>
+
   <article class="project-detail" id="robonbon">
     <div class="pd-media">
-      <div class="ph">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        Photo / démo Robonbon
-      </div>
+      <a class="video-embed" data-video-id="WdIxa3xNIXU"
+         href="https://www.youtube.com/watch?v=WdIxa3xNIXU"
+         target="_blank" rel="noopener"
+         aria-label="Voir la démo vidéo de Robonbon">
+        <img src="assets/img/robonbon-card.jpg" alt="" loading="lazy" width="808" height="380">
+        <span class="video-play" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+        <span class="video-label">Voir la démo</span>
+      </a>
     </div>
     <div class="pd-body">
       <span class="tag">// IA + Robotique</span>
@@ -108,12 +252,12 @@
       </div>
       <div class="pd-section">
         <h4>Contexte</h4>
-        <p>Système robotique intégrant reconnaissance vocale, traitement par LLM et contrôle d'un bras articulé pour créer des brochettes de bonbons. Une démonstration de la boucle complète perception → décision → action.</p>
+        <p>L'utilisateur commande sa brochette à la voix. Un LLM interprète la demande et pilote les distributeurs, qui déposent les bonbons choisis dans un tube vertical. Un bras robotique saisit ensuite une brochette vide et pique à travers le tube pour embrocher les bonbons dans l'ordre. Une démonstration de la boucle complète perception → décision → action.</p>
       </div>
       <div class="pd-section">
         <h4>Mon périmètre</h4>
         <ul class="pd-role-list">
-          <li>Module dialogue — pipeline reconnaissance vocale + LLM</li>
+          <li>Module dialogue - pipeline reconnaissance vocale + LLM</li>
           <li>Câblage et électronique générale</li>
           <li>Conception et fabrication du distributeur de bonbons (rails + moteurs DC)</li>
         </ul>
@@ -131,29 +275,26 @@
   </article>
 
   <article class="project-detail" id="doseur">
-    <div class="pd-media">
-      <div class="ph">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        Photo / schéma Robot Doseur
-      </div>
+    <div class="pd-media is-figure">
+      <img src="assets/img/doseur.jpg" alt="Les trois chaînes de mesure du robot doseur : conditionnement du signal du capteur Pt100, oscillateur NE555 pour la concentration, et pont de mesure pour le volume" loading="lazy" width="1128" height="240">
     </div>
     <div class="pd-body">
-      <span class="tag">// Mécatronique</span>
+      <span class="tag">// Électronique analogique</span>
       <h2>Robot Doseur</h2>
-      <p class="pd-tagline">Robot préparateur de boissons à paramètres contrôlés.</p>
+      <p class="pd-tagline">Mesurer trois grandeurs physiques en analogique, et asservir la préparation dessus.</p>
       <div class="pd-meta-row">
-        <span>CPE Lyon</span><span>Équipe de 3</span><span>Électronique analogique · Traitement du signal</span>
+        <span>CPE Lyon</span><span>Équipe de 3</span><span>Électronique analogique · Instrumentation</span>
       </div>
       <div class="pd-section">
         <h4>Contexte</h4>
-        <p>Système mécatronique préparant des boissons à température (20–50°C), concentration (10–90%) et volume (50–250ml) contrôlés. Chaîne complète capteurs → conditionnement → actionneurs.</p>
+        <p>Système mécatronique préparant des boissons à température (20-50°C), concentration (10-90%) et volume (50-250 ml) contrôlés. Chaîne complète capteurs → conditionnement → actionneurs.</p>
       </div>
       <div class="pd-section">
         <h4>Mon périmètre</h4>
         <ul class="pd-role-list">
-          <li>Mesure de température — capteur thermique + conditionnement du signal</li>
-          <li>Mesure de concentration — oscillateur NE555 + photodiode</li>
-          <li>Mesure de volume — pont de mesure</li>
+          <li>Mesure de température - capteur thermique + conditionnement du signal</li>
+          <li>Mesure de concentration - oscillateur NE555 + photodiode</li>
+          <li>Mesure de volume - pont de mesure</li>
           <li>MLI + pilotage pont en H</li>
           <li>Électrovannes et résistance de chauffage</li>
         </ul>
@@ -165,6 +306,44 @@
           <span class="pill">NE555</span>
           <span class="pill">PWM / Pont en H</span>
           <span class="pill">Traitement du signal</span>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="project-detail" id="chronoscore">
+    <div class="pd-media">
+      <img src="assets/img/chronoscore.jpg" alt="Afficheur 7 segments illustrant le chronomètre décrit en VHDL" loading="lazy" width="1128" height="300">
+    </div>
+    <div class="pd-body">
+      <span class="tag">// Électronique numérique</span>
+      <h2>ChronoScore - Chronomètre et compteur de score sur FPGA</h2>
+      <p class="pd-tagline">Décrire un système séquentiel complet en VHDL, puis le faire tourner sur une vraie carte.</p>
+      <div class="pd-meta-row">
+        <span>CPE Lyon</span><span>Équipe de 3</span><span>VHDL · FPGA</span>
+      </div>
+      <div class="pd-section">
+        <h4>Contexte</h4>
+        <p>Concevoir en VHDL un chronomètre couplé à un compteur de score, puis l'implémenter sur carte FPGA. Tout est décrit matériellement : pas de processeur, pas de code exécuté - de la logique séquentielle synthétisée directement dans le circuit.</p>
+      </div>
+      <div class="pd-section">
+        <h4>Architecture</h4>
+        <ul class="pd-role-list">
+          <li>Découpage en quatre sous-blocs indépendants : générateur de base de temps, affichage, chronomètre, score</li>
+          <li>Division de l'horloge 100 MHz de la carte pour produire les bases de temps utiles</li>
+          <li>Multiplexage de l'affichage 7 segments (commande des anodes et des segments)</li>
+          <li>Gestion des entrées boutons (départ, arrêt, remise à zéro, incrément de score)</li>
+          <li>Simulation de chaque sous-bloc avant assemblage, puis implémentation sur la carte</li>
+        </ul>
+      </div>
+      <div class="pd-section">
+        <h4>Stack technique</h4>
+        <div class="tag-row">
+          <span class="pill-accent">VHDL</span>
+          <span class="pill">FPGA</span>
+          <span class="pill">Logique séquentielle</span>
+          <span class="pill">Affichage 7 segments</span>
+          <span class="pill">Simulation</span>
         </div>
       </div>
     </div>

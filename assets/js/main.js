@@ -53,6 +53,39 @@ if (sections.length && navItems.length) {
   sections.forEach(s => observer.observe(s));
 }
 
+// ---------- VIDÉO DE DÉMO : façade cliquable -> iframe au clic ----------
+// Aucune ressource YouTube n'est chargée tant que l'utilisateur n'a pas
+// cliqué (une iframe YouTube pèse ~1 Mo et pose des cookies tiers). Sans JS,
+// la façade reste un simple lien vers la vidéo : le contenu est toujours
+// atteignable. Voir CLAUDE.md pour le markup à coller par projet.
+document.querySelectorAll('.video-embed[data-video-id]').forEach((facade) => {
+  const id = facade.dataset.videoId;
+  if (!id || id.startsWith('A_REMPLIR')) return; // identifiant pas encore renseigné
+
+  facade.addEventListener('click', (e) => {
+    // on laisse passer les gestes "ouvrir dans un nouvel onglet" : le <a> porte
+    // un target="_blank", il doit tenir sa promesse.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+    iframe.title = facade.getAttribute('aria-label') || 'Vidéo de démonstration';
+    iframe.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
+    iframe.allowFullscreen = true;
+
+    // on remplace le <a> par un conteneur neutre (une iframe dans un lien
+    // serait du HTML invalide et piégerait les clics)
+    const wrap = document.createElement('div');
+    wrap.className = 'video-embed playing';
+    wrap.appendChild(iframe);
+    facade.replaceWith(wrap);
+    // le <a> qui portait le focus vient de disparaître du DOM : sans ça,
+    // l'utilisateur clavier repart du haut de la page.
+    wrap.tabIndex = -1;
+    wrap.focus();
+  });
+});
+
 // ===========================================================
 // COUCHE WOW SCROLL — Lenis (smooth) + GSAP/ScrollTrigger
 // ===========================================================

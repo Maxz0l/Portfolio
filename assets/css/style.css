@@ -373,6 +373,11 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
 }
 .card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
 .project-card:hover .card-media img { transform: scale(1.05); }
+/* Même logique que .pd-media.is-figure : une planche ou un schéma doit être
+   montré en entier, pas recadré en bande. */
+.card-media.is-figure { padding: var(--s2); }
+.card-media.is-figure img { width: auto; height: auto; max-width: 100%; max-height: 100%; object-fit: contain; }
+.project-card:hover .card-media.is-figure img { transform: none; }
 .card-media .ph { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .card-media .ph svg { opacity: 0.4; }
 .card-body { padding: var(--s3); display: flex; flex-direction: column; flex: 1; }
@@ -469,7 +474,13 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
   overflow: hidden;
   margin-bottom: var(--s5);
 }
-.pd-media { height: 280px; background: var(--surface-2); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+.pd-media { height: 280px; background: var(--surface-2); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.pd-media img { width: 100%; height: 100%; object-fit: cover; }
+/* Visuel à montrer en entier (planche annotée, schéma, photo au ratio non
+   panoramique) : le recadrer en bande le rendrait illisible. Le fond
+   --surface-2 fait office de letterbox. */
+.pd-media.is-figure { height: auto; min-height: 280px; padding: var(--s2); }
+.pd-media.is-figure img { width: auto; height: auto; max-width: 100%; max-height: 400px; object-fit: contain; }
 .pd-media .ph { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .pd-body { padding: var(--s5); }
 .pd-body .tag { font-family: var(--font-mono); font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -482,6 +493,61 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
 .pd-role-list li { color: var(--text-muted); padding-left: 18px; position: relative; }
 .pd-role-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
 .pd-meta-row { display: flex; gap: var(--s4); flex-wrap: wrap; margin-bottom: var(--s3); font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); }
+
+/* ---------- VIDÉO DE DÉMO (façade cliquable) ---------- */
+/* La façade est un <a> vers YouTube : sans JS elle reste utilisable. Le JS
+   la remplace par l'iframe au clic seulement (cf. main.js). */
+.video-embed {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--surface-2);
+  overflow: hidden;
+  text-decoration: none;
+}
+.video-embed img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.5;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.video-embed:hover img { opacity: 0.72; transform: scale(1.03); }
+.video-play {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: rgba(10, 10, 15, 0.72);
+  color: var(--accent);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.video-embed:hover .video-play {
+  transform: scale(1.08);
+  box-shadow: 0 0 30px rgba(255, 140, 26, 0.25);
+}
+/* La règle générique `.project-card:hover .card-media img` est plus spécifique
+   que `.video-embed:hover img` : sans ça, le zoom de carte écraserait celui,
+   plus discret, prévu pour la façade. Un seul geste de survol par média. */
+.project-card:hover .card-media .video-embed img { transform: scale(1.03); }
+.video-label {
+  position: absolute;
+  bottom: var(--s2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  letter-spacing: 0.05em;
+}
+.video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
 /* ---------- FOOTER (partagé) ---------- */
 .footer { border-top: 1px solid var(--border); padding: var(--s4) 0; position: relative; z-index: 1; }

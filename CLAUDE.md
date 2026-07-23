@@ -4,9 +4,11 @@ Ce fichier guide Claude Code dans le développement de ce projet. Lis-le entièr
 
 ## Vue d'ensemble
 
-Portfolio personnel d'**Enzo Lorandi**, ingénieur ETI (CPE Lyon) spécialisé en **robotique de service**, à la recherche d'un **PFE en robotique / IA / sciences du numérique à partir de octobre 2026**.
+Portfolio personnel d'**Enzo Lorandi**, ingénieur ETI (CPE Lyon) spécialisé en **robotique de service** : électronique, systèmes embarqués, robotique et IA appliquée.
 
-Objectif du site : convaincre un recruteur (labo, startup ou grand groupe industriel) de proposer un PFE. Le profil est différenciant et doit être assumé, pas dilué.
+Objectif du site : montrer l'étendue et la profondeur technique du profil, et donner envie d'engager la conversation (labo, startup ou grand groupe industriel). Le profil est différenciant et doit être assumé, pas dilué.
+
+> **Décision du 2026-07-23 : aucune mention de PFE sur le site.** Enzo présente son profil dans un cadre professionnel (mission RATP via IKOS) où afficher une recherche de stage de fin d'études ailleurs serait contre-productif. Le site se positionne donc sur **ce qu'il sait faire**, pas sur **ce qu'il cherche**. Ne pas réintroduire « PFE », « à la recherche de » ou une date de disponibilité sans son accord explicite. Conséquence assumée : le site n'a plus d'appel à l'action daté - c'était le levier principal identifié par Élise, on l'a échangé contre la neutralité.
 
 ## Stack technique
 
@@ -85,21 +87,39 @@ Principes (garde-fous, cf. skill `scroll-motion`) :
 ### Identité
 - Nom : Enzo Lorandi
 - Accroche : "Robotique · IA · Sciences du numérique" (à retravailler pour être le plus générique possible, le cv sert à ciblé la personne, le portefolio a pour objectif de montrer mon profil complet et faire un effet WOW)
-- Objectif : PFE en robotique ou autre chose qui est en rapport avec ma formation initiale (CPE Lyon ETI), 2026
+- Positionnement affiché : « Ingénieur ETI (CPE Lyon) - du capteur à l'IA ». Pas d'objectif de recherche affiché (cf. décision du 2026-07-23 en tête de fichier).
 
 ### Expérience (page experiences, timeline du + récent au + ancien)
 1. **RATP** (Mars–Sept 2026) — Coordinateur Technique Systèmes, via IKOS Consulting. Implémentation du MF19, lignes 3bis/7bis/10. Interfacage entre les différents MOE : Signalisation, traction, voie, GC, BT, PAE... et les exploitants: maintenance des train et exploitation classique. NB : mettre RATP en avant, IKOS en sous-ligne.
 2. **Università di Padova** (Sept 2025–Fév 2026) — Échange robotique : robotique industrielle, intelligente, neurorobotique.
 3. **CPE Lyon** (2022–2026) — Diplôme ingénieur ETI, spécialisation Robotique de Service.
 
-> Note : la mission RATP est le stage élève ingénieur (validation école). Le PFE est encore à trouver — c'est l'objectif du site.
+> Note : la mission RATP est le stage élève ingénieur (validation école). Cette information reste interne au fichier - elle n'est pas affichée sur le site.
 
 ### Projets (page projets) — toujours préciser le RÔLE PERSONNEL d'Enzo, pas juste le projet global
+
+**Ordre acté par Enzo** : classement par importance de son rôle personnel. LockWise en tête (le plus complet, le plus concret, celui où il touche le plus de domaines), puis les **projets individuels** de Padoue (neurorobotique, puis les deux assignments d'Intelligent Robotics), puis les projets d'équipe (Robonbon, Robot Doseur).
+
+**Projets de Padoue (individuels, ajoutés après l'état des lieux du 2026-07-23)** — ils comblent un trou majeur : la section Compétences annonçait « ROS2 (avancé) » sans qu'aucun projet ROS2 ne soit montré.
+4. **Décodage BCI** (individuel) — imagerie motrice sur EEG, 3 jours / 8 sujets. Traitement du signal (spectrogrammes, CAR, Laplacien, band power), carte de Fisher, topographies ERD/ERS, décodeur par sujet, évaluation en ligne par accumulation d'évidence, chaîne ROS-Neuro. MATLAB / EEGLAB / BioSig. Code : https://github.com/Maxz0l/neurorobotics
+5. **TurtleBot3** (individuel) — navigation guidée par AprilTag vers le point médian de deux tags, puis détection de tables cylindriques au LiDAR. Architecture **hybride délibératif/réactif** (Arkin, Brooks) assumée contre Bug2/A*, 4 nœuds ROS 2, TF2, 4 couches de priorité. ROS 2 Humble / Gazebo. Vidéo : https://youtu.be/XyFvxgqdXcs · Code : https://github.com/Maxz0l/lorandi_assignement_1
+6. **UR5 + MoveIt!** (individuel) — échange de deux cubes repérés par AprilTag avec pince Robotiq 85, en deux mouvements sans emplacement tampon. 4 nœuds ROS 2 découplés par topics/TF, MoveIt! 2 (IK, chemins cartésiens, scène de planification), détection de couleur OpenCV. Vidéo : https://youtu.be/ha9ZuNDaH0M · Code : https://github.com/Maxz0l/lorandi_assignment_2
+
+**Projet CPE ajouté le 2026-07-23**
+7. **ChronoScore** (équipe de 3, Enzo cité parmi les auteurs sur la page de garde) — chronomètre + compteur de score décrits en **VHDL** et implémentés sur carte **FPGA**. Quatre sous-blocs (base de temps, affichage, chronomètre, score), division de l'horloge 100 MHz, multiplexage de l'affichage 7 segments, gestion des boutons, simulation avant implémentation. Comble le trou « Électronique numérique », annoncée en compétences sans projet pour l'illustrer. **Le rôle personnel d'Enzo n'est pas documenté et il ne s'en souvient pas** : la section s'intitule donc **« Architecture »** et non « Mon périmètre », et la méta indique « Équipe de 3 ». Ne pas transformer en périmètre personnel sans qu'Enzo le confirme.
+
+**Projet en attente d'arbitrage — « Projet TSA » (Traitement du Signal Aléatoire)**
+Contenu décodé et prêt (amélioration de captations audio de concerts : modulation par déplacement de fréquence binaire, estimation de la densité de probabilité du bruit et de la densité spectrale de puissance, détection d'un signal noyé dans le bruit par filtrage adapté / maximisation du SNR, prédiction autorégressive d'ordre M par filtrage optimal de Wiener). **NON publié** : la diapo de titre porte les noms de deux camarades et pas celui d'Enzo. À ne pas ajouter tant qu'il n'a pas confirmé sa participation.
+
+> **Extraction du contenu des PDF sans outillage** : l'environnement n'a ni poppler, ni Python, ni ffmpeg. Les PDF exportés de PowerPoint/Slides ont leurs flux compressés en Deflate (lisibles via `System.IO.Compression.DeflateStream` en C# compilé par `Add-Type`) et leurs polices **sous-ensemblées décalent les codes de caractères d'un offset constant** — +29 pour la plupart, +3 pour une seconde police dans `SCORING PROJECT.pdf`. Décoder = inflater le flux, récupérer les littéraux `(...)` des opérateurs `Tj`/`TJ`, puis ajouter l'offset. Les accents se perdent (codes hors plage), donc le texte extrait sert à *comprendre* le projet, pas à être recopié.
+
+> **Point de vigilance** : les README des deux assignments d'Intelligent Robotics mentionnent publiquement un recours à Claude comme aide au développement, avec la liste de la contribution humaine (choix d'architecture, calibration des paramètres, intégration, tests). Le contenu du site est rédigé **à partir de cette contribution humaine documentée**, sans la contredire ni la masquer. Un recruteur qui ouvre le dépôt verra la mention : c'est cohérent avec le fait qu'Enzo revendique « Claude Code » et le prompt engineering en compétences.
+
 1. **LockWise** (équipe de 7) — Casier sécurisé à clés par RFID. STM32 + Raspberry Pi + Django.
    Rôle d'Enzo : driver RFID (MFRC522/SPI), capteurs (IR + reed switch), actionneurs (serrures/pont en H), FSM embarquée, design boîtier. Code : https://gitlab.com/enzo4623206/lockwise
 2. **Robonbon** (équipe de 3) — Robot vocal créateur de brochettes, piloté par LLM.
    Rôle d'Enzo : module dialogue (reconnaissance vocale + LLM), câblage/électronique, conception du distributeur de bonbons (rails + moteurs DC).
-3. **Robot Doseur** (équipe de 3) — Préparateur de boissons (température/concentration/volume contrôlés).
+3. **Robot Doseur** (équipe de 3) — Préparateur de boissons (température/concentration/volume contrôlés). **Catégorisation actée par Enzo : électronique analogique / instrumentation, PAS « mécatronique »** — son périmètre est la chaîne de mesure analogique (conditionnement, NE555, pont de mesure) et la puissance, pas la conception mécanique.
    Rôle d'Enzo : mesure température (capteur + conditionnement), concentration (NE555 + photodiode), volume (pont de mesure), MLI/pont en H, électrovannes, résistance de chauffage. (Pas l'IHM.)
 
 ### Compétences (6 domaines)
@@ -111,8 +131,48 @@ Principes (garde-fous, cf. skill `scroll-motion`) :
 - **Langues** : Français (natif), Anglais (C1), Italien (notions)
 
 ### À compléter par Enzo (placeholders dans le code)
-- Photo de profil (hero) + photos/visuels des projets (`assets/img/`)
+**Traitement « planche technique » (procédé acté sur le Robot Doseur)** : quand la seule source disponible est un schéma sur fond blanc, ne pas le coller tel quel (pavé blanc qui jure sur le dark cyber) et ne pas l'agrandir (flou). Le bon procédé : extraire les figures à leur **résolution native**, les transposer en **blanc-sur-sombre** (luminance inversée, puis interpolation entre `--surface-2` et `--text`, avec un gamma par figure selon que le tracé est imprimé, au stylo ou au crayon), et les **composer côte à côte** sur un canevas `--surface-2`. Le fond de la figure devient exactement la couleur du canevas : aucune couture visible, et le résultat s'intègre à la charte. Voir `assets/img/doseur.jpg` (1128x240, 42 Ko) pour le résultat.
+
+**Deux formats par visuel : `-card` et pleine largeur.** Les blocs média n'ont pas le même ratio - `.card-media` fait ~1,9:1 (180 px de haut) et `.pd-media` ~3,6:1. Un visuel unique recadré pour les deux est illisible dans l'un des deux. D'où les paires `lockwise-card.jpg` / `lockwise-schema.jpg`, `doseur-card.jpg` / `doseur.jpg`, `chronoscore-card.jpg` / `chronoscore.jpg`. Corollaire acté : **ne pas utiliser `is-figure` sur `.card-media`** - une planche annotée y rend à ~189 px de large, ce qui n'est plus une information mais une texture. `is-figure` reste correct sur `.pd-media` (400 px max).
+
+**ChronoScore : visuel procédural assumé.** `chronoscore.jpg` est un afficheur 7 segments dessiné par programme aux couleurs de la charte, pas une photo. C'est une **illustration**, pas une preuve - elle comble le trou visuel sans rien prétendre de faux. À remplacer dès qu'Enzo peut photographier la carte FPGA avec l'afficheur allumé.
+
+> Rappel : une photo optiquement floue ne se rattrape pas. Le masque flou remonte le contraste mais ne recrée aucun détail - si la source est ratée, changer de source plutôt que de la retoucher.
+
+- Photos/visuels des 3 projets (`assets/img/`). Ordre d'impact validé : (1) **vidéo de démo** (voir ci-dessous) — la preuve la plus forte, le système est vu en marche ; (2) photo du montage réel, même prise au téléphone ; (3) figure extraite des supports de présentation (schéma d'architecture, schéma électronique, rendu CAO), **recadrée** pour ne garder que la figure ; (4) jamais une capture de slide entière (titre, logo, puces, fond blanc).
 - Liens GitLab / GitHub (email + LinkedIn déjà en place)
+
+### Composant vidéo de démo (façade cliquable)
+
+Enzo a des vidéos YouTube de démonstration (Robonbon, projets de robotique intelligente de Padoue ; les liens sont dans les dépôts GitHub des projets).
+
+**Décision actée : ne pas héberger les vidéos dans le dépôt.** GitHub Pages plafonne à 100 Mo par fichier, ~1 Go de dépôt et ~100 Go/mois de bande passante ; et sans ffmpeg dans l'environnement on ne peut pas les recompresser correctement. **Ne pas non plus poser une `<iframe>` YouTube directe** : ~1 Mo de JS et des cookies tiers au chargement, sur une page qui porte déjà Three.js.
+
+À la place, un composant **façade** (`.video-embed`, CSS dans `style.css`, JS dans `main.js`) : une vignette cliquable qui ne charge l'iframe (`youtube-nocookie.com`) qu'**au clic**. Sans JS, la façade reste un lien vers YouTube — le contenu est toujours atteignable.
+
+Markup à coller dans le `.pd-media` du projet concerné (`projets.html`) :
+
+```html
+<div class="pd-media">
+  <a class="video-embed" data-video-id="ID_YOUTUBE"
+     href="https://www.youtube.com/watch?v=ID_YOUTUBE"
+     target="_blank" rel="noopener"
+     aria-label="Voir la démo vidéo de NOM_DU_PROJET">
+    <img src="assets/img/NOM-poster.jpg" alt="" loading="lazy" width="960" height="540">
+    <span class="video-play" aria-hidden="true">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    </span>
+    <span class="video-label">Voir la démo</span>
+  </a>
+</div>
+```
+
+- `data-video-id` : l'identifiant seul (la partie après `v=`), pas l'URL complète.
+- Le `<img>` poster est **obligatoire en pratique** : sans lui, la façade est un rectangle gris et la grille projets se retrouve à moitié vide (défaut relevé par 5 agents sur 7 lors de l'état des lieux du 2026-07-23). Il porte `alt=""` : c'est un fond décoratif, l'`aria-label` du `<a>` porte déjà l'information.
+
+**Source des vignettes : les vidéos d'Enzo, jamais des images du web.** Décision actée. Les vignettes proviennent de `https://img.youtube.com/vi/<ID>/maxresdefault.jpg`, c'est-à-dire d'images de ses propres vidéos. Deux raisons de ne pas prendre de photo de UR5 ou de TurtleBot sur le web : (1) droit d'auteur, ces images sont protégées et le site est public ; (2) surtout, une photo de catalogue n'est pas son travail - tout l'argument du site est de **prouver que la chose existe**, une illustration générique le détruit. Attention au recadrage : la vignette de Robonbon contient un panneau de titre avec les noms des camarades et de l'encadrant, à exclure (cf. règle 8).
+- Tant que `data-video-id` commence par `A_REMPLIR`, le JS reste inerte (garde-fou anti-vidéo cassée en production).
+- Ce composant règle aussi le « cul-de-sac » relevé par Sara et Élise : Robonbon et Robot Doseur n'ont aujourd'hui aucun lien de sortie ni preuve, contrairement à LockWise qui a son GitLab.
 
 ## Roadmap / état d'avancement
 
@@ -130,9 +190,10 @@ Principes (garde-fous, cf. skill `scroll-motion`) :
 - [x] Cercle photo hero agrandi (`clamp(180px, 17vw, 240px)`), prêt à recevoir la vraie photo
 - [x] Accessibilité : focus clavier (`:focus-visible`), lien d'évitement, icônes SVG (remplacement emojis), cible tactile nav
 - [x] **Environnement scroll-motion** : GSAP + ScrollTrigger + Lenis vendorisés, skill `scroll-motion` + `REFERENCES.md`, design system motion documenté
-- [ ] **Couche WOW scroll v1** : smooth scroll Lenis + révélations organiques au scroll (piliers, cartes, skills, timeline) + 1 moment fort pinné — à implémenter dans `main.js` via le skill `scroll-motion`
-- [ ] **Photo de profil réelle** — placeholder `[ photo ]` dans `.hero-photo` (index.html), à remplacer
+- [x] **Couche WOW scroll v1** : smooth scroll Lenis + révélations organiques au scroll (piliers, cartes, skills, timeline) + moment fort pinné sur le manifeste — implémenté dans `main.js`
+- [x] **Photo de profil réelle** — `assets/img/enzo-lorandi.jpg` (560x560, 23 Ko), dérivée recadrée de l'original `LORANDI-Enzo.jpg` (4083x3860, 750 Ko) conservé au dépôt. Toute nouvelle photo doit être redimensionnée : le hero est au-dessus de la ligne de flottaison.
 - [ ] Photos réelles des 3 projets (actuellement placeholders SVG dans `index.html` et `projets.html`)
+- [ ] **Minifier Three.js** — `assets/vendor/three.module.js` est le build **non minifié** de r160 (1,29 Mo, ~85 % du JS du site). Le build minifié officiel (`three.module.min.js`, ~670 Ko) diviserait le coût de parsing par deux. Nécessite l'accord d'Enzo sur la source de téléchargement (npm/unpkg/GitHub releases).
 - [ ] **Couche WOW v2 (optionnelle, en pause)** : photo détourée d'Enzo en fond, bras robotique « posé » dans une main + réseau de neurones dans l'autre. Idée mise de côté au profit de la puce seule, mais la hiérarchie de pivots du bras reste prête pour un repositionnement dans une main si l'idée est reprise.
 - [ ] Liens GitLab / GitHub (non prioritaire)
 
@@ -210,3 +271,4 @@ Règle de choix : **débat orchestré** pour décider vite pendant qu'on code ; 
 5. **Ne sur-vends pas, n'édulcore pas** : le contenu est validé, factuel et assumé. En cas de doute sur une formulation, demande.
 6. **Lisibilité avant effet** : sur le dark cyber, le contraste texte doit rester impeccable.
 7. **Français** : tout le contenu visible est en français. Tirets simples `-`, pas de tirets longs.
+8. **Aucune donnée personnelle de tiers dans le dépôt** — ni sur le site, ni dans les images, ni dans `CLAUDE.md`, ni dans aucun fichier versionné. Pas de noms de camarades, pas de visages identifiables. Raison : **tout fichier commité est publiquement lisible** (le dépôt GitHub et GitHub Pages), y compris les fichiers de travail comme celui-ci et les fichiers jamais référencés par une page. Les projets d'équipe se décrivent par leur taille (« Équipe de 3 »), jamais par les personnes. Les originaux contenant des tiers restent en local et sont listés dans `.gitignore`.
