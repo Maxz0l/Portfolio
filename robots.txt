@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://maxz0l.github.io/Portfolio/sitemap.xml

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0f">
 <title>Projets - Enzo Lorandi</title>
 <meta name="description" content="Les projets robotiques et embarqués d'Enzo Lorandi : navigation ROS 2, manipulation UR5 / MoveIt!, décodage BCI, LockWise, Robonbon, Robot Doseur, VHDL sur FPGA.">
 <link rel="canonical" href="https://maxz0l.github.io/Portfolio/projets.html">
@@ -18,9 +19,9 @@
 <meta name="twitter:title" content="Projets - Enzo Lorandi">
 <meta name="twitter:description" content="Sept projets menés du capteur à l'IA : robotique ROS 2, décodage BCI, systèmes embarqués, électronique analogique et VHDL sur FPGA.">
 <meta name="twitter:image" content="https://maxz0l.github.io/Portfolio/assets/img/og-image.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/space-grotesk-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -32,12 +33,12 @@
   <a href="index.html" class="nav-logo">Enzo Lorandi<span class="accent">.</span></a>
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html#profil">Profil</a></li>
-    <li><a href="projets.html" class="active">Projets</a></li>
+    <li><a href="projets.html" class="active" aria-current="page">Projets</a></li>
     <li><a href="experiences.html">Expérience</a></li>
     <li><a href="index.html#competences">Compétences</a></li>
     <li><a href="index.html#contact" class="nav-cta">Contact</a></li>
   </ul>
-  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
 </nav>
 
 <header class="page-header" id="main">
@@ -45,10 +46,19 @@
     <div class="section-label">Projets</div>
     <h1>Mes <span class="accent">projets</span></h1>
     <p>Sept projets menés de la conception matérielle à l'intelligence logicielle : robotique mobile et manipulation sous ROS 2, décodage de signaux cérébraux, systèmes embarqués, électronique analogique et numérique. Pour chacun, mon rôle précis.</p>
+    <nav class="project-toc" aria-label="Sommaire des projets">
+      <a href="#lockwise" class="toc-chip">LockWise</a>
+      <a href="#neurorobotique" class="toc-chip">Décodage BCI</a>
+      <a href="#turtlebot" class="toc-chip">TurtleBot3</a>
+      <a href="#ur5" class="toc-chip">UR5 + MoveIt!</a>
+      <a href="#robonbon" class="toc-chip">Robonbon</a>
+      <a href="#doseur" class="toc-chip">Robot Doseur</a>
+      <a href="#chronoscore" class="toc-chip">ChronoScore</a>
+    </nav>
   </div>
 </header>
 
-<main class="container" style="padding-bottom: var(--s7);">
+<main class="container page-main">
 
   <article class="project-detail" id="lockwise">
     <div class="pd-media is-figure">
@@ -56,17 +66,17 @@
     </div>
     <div class="pd-body">
       <span class="tag">// Système embarqué</span>
-      <h2>LockWise</h2>
+      <h2>LockWise - Casier à clés sécurisé par RFID</h2>
       <p class="pd-tagline">Système embarqué de gestion sécurisée des clés par badge RFID.</p>
       <div class="pd-meta-row">
         <span>CPE Lyon</span><span>Équipe de 7</span><span>STM32 · Raspberry Pi · Django</span>
       </div>
       <div class="pd-section">
-        <h4>Contexte</h4>
+        <h3>Contexte</h3>
         <p>Dans un bâtiment ancien, remplacer toutes les serrures est coûteux. LockWise centralise les clés physiques dans un casier connecté, accessible uniquement par badge RFID, sans modifier l'infrastructure existante.</p>
       </div>
       <div class="pd-section">
-        <h4>Mon périmètre</h4>
+        <h3>Mon périmètre</h3>
         <ul class="pd-role-list">
           <li>Driver RFID bas niveau (MFRC522 via SPI)</li>
           <li>Capteurs infrarouges + Reed switch (présence clé, fermeture porte)</li>
@@ -76,7 +86,7 @@
         </ul>
       </div>
       <div class="pd-section">
-        <h4>Stack technique</h4>
+        <h3>Stack technique</h3>
         <div class="tag-row">
           <span class="pill-accent">STM32F303</span>
           <span class="pill">C / HAL</span>
@@ -85,7 +95,10 @@
           <span class="pill">Raspberry Pi</span>
         </div>
       </div>
-      <a href="https://gitlab.com/enzo4623206/lockwise" target="_blank" rel="noopener" class="btn-link">Voir le code sur GitLab →</a>
+      <div class="pd-links">
+        <a href="https://gitlab.com/enzo4623206/lockwise" target="_blank" rel="noopener" class="btn-link">Voir le code sur GitLab →</a>
+        <a href="#main" class="btn-link">↑ Sommaire</a>
+      </div>
     </div>
   </article>
 
@@ -101,11 +114,11 @@
         <span>Università di Padova</span><span>Projet individuel</span><span>MATLAB · EEG / BCI</span>
       </div>
       <div class="pd-section">
-        <h4>Contexte</h4>
+        <h3>Contexte</h3>
         <p>Analyse d'une expérience d'imagerie motrice menée sur 3 jours et 8 sujets. L'enjeu : reconnaître dans l'EEG l'intention de bouger les mains ou les pieds, puis transformer cette reconnaissance en commande fiable - un classifieur qui décide à chaque échantillon serait trop instable pour piloter quoi que ce soit.</p>
       </div>
       <div class="pd-section">
-        <h4>Mon périmètre</h4>
+        <h3>Mon périmètre</h3>
         <ul class="pd-role-list">
           <li>Traitement du signal - spectrogrammes, filtrage spatial (CAR, Laplacien), band power</li>
           <li>Analyse population - carte de Fisher, topographies ERD/ERS sur les bandes mu et beta</li>
@@ -116,17 +129,20 @@
         </ul>
       </div>
       <div class="pd-section">
-        <h4>Stack technique</h4>
+        <h3>Stack technique</h3>
         <div class="tag-row">
-          <span class="pill-accent">MATLAB</span>
+          <span class="pill-accent">ROS-Neuro</span>
+          <span class="pill">MATLAB</span>
           <span class="pill">EEGLAB</span>
           <span class="pill">BioSig</span>
-          <span class="pill">ROS-Neuro</span>
           <span class="pill">Traitement du signal</span>
           <span class="pill">Classification</span>
         </div>
       </div>
-      <a href="https://github.com/Maxz0l/neurorobotics" target="_blank" rel="noopener" class="btn-link">Voir le code sur GitHub →</a>
+      <div class="pd-links">
+        <a href="https://github.com/Maxz0l/neurorobotics" target="_blank" rel="noopener" class="btn-link">Voir le code sur GitHub →</a>
+        <a href="#main" class="btn-link">↑ Sommaire</a>
+      </div>
     </div>
   </article>
 
@@ -151,11 +167,11 @@
         <span>Università di Padova</span><span>Projet individuel</span><span>ROS 2 Humble · Gazebo · TF2</span>
       </div>
       <div class="pd-section">
-        <h4>Contexte</h4>
+        <h3>Contexte</h3>
         <p>Le robot doit repérer deux marqueurs AprilTag, rejoindre leur point médian sans heurter d'obstacle, puis détecter les tables cylindriques autour de lui au LiDAR et publier leur position dans le repère monde.</p>
       </div>
       <div class="pd-section">
-        <h4>Mon périmètre</h4>
+        <h3>Mon périmètre</h3>
         <ul class="pd-role-list">
           <li>Choix d'une architecture hybride délibératif/réactif (Arkin, Brooks) plutôt qu'un Bug2 ou un A* : le robot avance toujours, les corrections de cap et la répulsion d'obstacle s'additionnent</li>
           <li>4 nœuds ROS 2 - détection de tags, navigation, détection de tables, agrégation</li>
@@ -166,7 +182,7 @@
         </ul>
       </div>
       <div class="pd-section">
-        <h4>Stack technique</h4>
+        <h3>Stack technique</h3>
         <div class="tag-row">
           <span class="pill-accent">ROS 2 Humble</span>
           <span class="pill">Python</span>
@@ -176,7 +192,10 @@
           <span class="pill">AprilTag</span>
         </div>
       </div>
-      <a href="https://github.com/Maxz0l/lorandi_assignement_1" target="_blank" rel="noopener" class="btn-link">Voir le code sur GitHub →</a>
+      <div class="pd-links">
+        <a href="https://github.com/Maxz0l/lorandi_assignement_1" target="_blank" rel="noopener" class="btn-link">Voir le code sur GitHub →</a>
+        <a href="#main" class="btn-link">↑ Sommaire</a>
+      </div>
     </div>
   </article>
 
@@ -201,11 +220,11 @@
         <span>Università di Padova</span><span>Projet individuel</span><span>ROS 2 · MoveIt! 2 · UR5</span>
       </div>
       <div class="pd-section">
-        <h4>Contexte</h4>
+        <h3>Contexte</h3>
         <p>Un bras UR5 équipé d'une pince Robotiq 85 doit intervertir deux cubes identifiés par AprilTag, observés par une caméra RGB fixe, puis revenir en position de repos. La contrainte intéressante : réaliser l'échange en deux mouvements, sans zone de dépôt intermédiaire.</p>
       </div>
       <div class="pd-section">
-        <h4>Mon périmètre</h4>
+        <h3>Mon périmètre</h3>
         <ul class="pd-role-list">
           <li>Architecture en 4 nœuds ROS 2 indépendants, communiquant uniquement par topics et arbre TF</li>
           <li>Conversion des détections AprilTag en poses de cubes dans le repère monde, avec calibration par tag</li>
@@ -216,7 +235,7 @@
         </ul>
       </div>
       <div class="pd-section">
-        <h4>Stack technique</h4>
+        <h3>Stack technique</h3>
         <div class="tag-row">
           <span class="pill-accent">MoveIt! 2</span>
           <span class="pill">ROS 2</span>
@@ -226,7 +245,10 @@
           <span class="pill">Gazebo</span>
         </div>
       </div>
-      <a href="https://github.com/Maxz0l/lorandi_assignment_2" target="_blank" rel="noopener" class="btn-link">Voir le code sur GitHub →</a>
+      <div class="pd-links">
+        <a href="https://github.com/Maxz0l/lorandi_assignment_2" target="_blank" rel="noopener" class="btn-link">Voir le code sur GitHub →</a>
+        <a href="#main" class="btn-link">↑ Sommaire</a>
+      </div>
     </div>
   </article>
 
@@ -245,17 +267,17 @@
     </div>
     <div class="pd-body">
       <span class="tag">// IA + Robotique</span>
-      <h2>Robonbon</h2>
+      <h2>Robonbon - Robot vocal créateur de brochettes</h2>
       <p class="pd-tagline">Robot créateur de brochettes de bonbons à commande vocale.</p>
       <div class="pd-meta-row">
         <span>CPE Lyon</span><span>Équipe de 3</span><span>LLM · Bras articulé · Mécatronique</span>
       </div>
       <div class="pd-section">
-        <h4>Contexte</h4>
+        <h3>Contexte</h3>
         <p>L'utilisateur commande sa brochette à la voix. Un LLM interprète la demande et pilote les distributeurs, qui déposent les bonbons choisis dans un tube vertical. Un bras robotique saisit ensuite une brochette vide et pique à travers le tube pour embrocher les bonbons dans l'ordre. Une démonstration de la boucle complète perception → décision → action.</p>
       </div>
       <div class="pd-section">
-        <h4>Mon périmètre</h4>
+        <h3>Mon périmètre</h3>
         <ul class="pd-role-list">
           <li>Module dialogue - pipeline reconnaissance vocale + LLM</li>
           <li>Câblage et électronique générale</li>
@@ -263,13 +285,16 @@
         </ul>
       </div>
       <div class="pd-section">
-        <h4>Stack technique</h4>
+        <h3>Stack technique</h3>
         <div class="tag-row">
-          <span class="pill-accent">Python</span>
-          <span class="pill">LLM</span>
+          <span class="pill-accent">LLM</span>
+          <span class="pill">Python</span>
           <span class="pill">Moteurs DC</span>
           <span class="pill">Capteur infrarouge</span>
         </div>
+      </div>
+      <div class="pd-links">
+        <a href="#main" class="btn-link">↑ Sommaire</a>
       </div>
     </div>
   </article>
@@ -280,17 +305,17 @@
     </div>
     <div class="pd-body">
       <span class="tag">// Électronique analogique</span>
-      <h2>Robot Doseur</h2>
+      <h2>Robot Doseur - Préparation de boissons asservie</h2>
       <p class="pd-tagline">Mesurer trois grandeurs physiques en analogique, et asservir la préparation dessus.</p>
       <div class="pd-meta-row">
         <span>CPE Lyon</span><span>Équipe de 3</span><span>Électronique analogique · Instrumentation</span>
       </div>
       <div class="pd-section">
-        <h4>Contexte</h4>
-        <p>Système mécatronique préparant des boissons à température (20-50°C), concentration (10-90%) et volume (50-250 ml) contrôlés. Chaîne complète capteurs → conditionnement → actionneurs.</p>
+        <h3>Contexte</h3>
+        <p>Système automatisé préparant des boissons à température (20-50°C), concentration (10-90%) et volume (50-250 ml) contrôlés. Chaîne complète capteurs → conditionnement → actionneurs.</p>
       </div>
       <div class="pd-section">
-        <h4>Mon périmètre</h4>
+        <h3>Mon périmètre</h3>
         <ul class="pd-role-list">
           <li>Mesure de température - capteur thermique + conditionnement du signal</li>
           <li>Mesure de concentration - oscillateur NE555 + photodiode</li>
@@ -300,13 +325,16 @@
         </ul>
       </div>
       <div class="pd-section">
-        <h4>Stack technique</h4>
+        <h3>Stack technique</h3>
         <div class="tag-row">
-          <span class="pill-accent">Électronique analogique</span>
-          <span class="pill">NE555</span>
+          <span class="pill-accent">NE555</span>
+          <span class="pill">Pont de mesure</span>
           <span class="pill">PWM / Pont en H</span>
           <span class="pill">Traitement du signal</span>
         </div>
+      </div>
+      <div class="pd-links">
+        <a href="#main" class="btn-link">↑ Sommaire</a>
       </div>
     </div>
   </article>
@@ -323,11 +351,11 @@
         <span>CPE Lyon</span><span>Équipe de 3</span><span>VHDL · FPGA</span>
       </div>
       <div class="pd-section">
-        <h4>Contexte</h4>
+        <h3>Contexte</h3>
         <p>Concevoir en VHDL un chronomètre couplé à un compteur de score, puis l'implémenter sur carte FPGA. Tout est décrit matériellement : pas de processeur, pas de code exécuté - de la logique séquentielle synthétisée directement dans le circuit.</p>
       </div>
       <div class="pd-section">
-        <h4>Architecture</h4>
+        <h3>Architecture</h3>
         <ul class="pd-role-list">
           <li>Découpage en quatre sous-blocs indépendants : générateur de base de temps, affichage, chronomètre, score</li>
           <li>Division de l'horloge 100 MHz de la carte pour produire les bases de temps utiles</li>
@@ -337,7 +365,7 @@
         </ul>
       </div>
       <div class="pd-section">
-        <h4>Stack technique</h4>
+        <h3>Stack technique</h3>
         <div class="tag-row">
           <span class="pill-accent">VHDL</span>
           <span class="pill">FPGA</span>
@@ -346,15 +374,23 @@
           <span class="pill">Simulation</span>
         </div>
       </div>
+      <div class="pd-links">
+        <a href="#main" class="btn-link">↑ Sommaire</a>
+      </div>
     </div>
   </article>
+
+  <div class="page-cta">
+    <p>Un projet ou une question sur l'un de ces sujets ?</p>
+    <a href="index.html#contact" class="btn-primary">Me contacter</a>
+  </div>
 
 </main>
 
 <footer class="footer">
   <div class="container">
     <span>© 2026 Enzo Lorandi</span>
-    <span>Ingénieur ETI · CPE Lyon</span>
+    <span>CPE Lyon · Robotique & IA appliquée</span>
   </div>
 </footer>
 

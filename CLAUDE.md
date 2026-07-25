@@ -14,20 +14,24 @@ Objectif du site : montrer l'étendue et la profondeur technique du profil, et d
 
 - **HTML / CSS / JavaScript pur** — aucun framework, aucune dépendance build.
 - Hébergement cible : **GitHub Pages** (statique uniquement, pas de PHP ni backend).
-- Polices via Google Fonts : `Space Grotesk` (titres), `Inter` (corps), `JetBrains Mono` (labels techniques).
+- Polices **auto-hébergées** (`assets/fonts/`, 20 woff2 latin + latin-ext, `assets/css/fonts.css` avec `unicode-range`) : `Space Grotesk` (titres), `Inter` (corps), `JetBrains Mono` (labels techniques). Plus aucun appel à Google Fonts (décision du 2026-07-24 : alignement sur la doctrine « tout vendorisé », LCP, RGPD).
 
 ## Architecture du projet
 
 ```
 /
-├── index.html          # Accueil one-page scrollable (6 sections)
-├── projets.html        # Détail des 3 projets
+├── index.html          # Accueil one-page scrollable (6 sections) + JSON-LD Person
+├── projets.html        # Détail des 7 projets
 ├── experiences.html    # Timeline parcours (RATP, Padoue, CPE)
+├── 404.html            # Page introuvable en charte (chemins absolus /Portfolio/, servie par GitHub Pages)
+├── robots.txt · sitemap.xml · .nojekyll · README.md   # Fondations SEO / GitHub Pages
 └── assets/
     ├── css/style.css        # TOUT le design system + styles partagés (fichier unique)
+    ├── css/fonts.css        # @font-face des polices auto-hébergées (généré depuis l'API css2)
+    ├── fonts/               # 20 woff2 (Space Grotesk 400-700, Inter 300-600, JetBrains Mono 400-500)
     ├── js/main.js           # JS partagé 3 pages (nav, scroll, reveal, smooth scroll Lenis + GSAP)
-    ├── js/hero3d.js         # Module ES, accueil uniquement : bras robotique 3D (Three.js)
-    ├── vendor/three.module.js   # Three.js hébergé en local (pas de CDN)
+    ├── js/hero3d.js         # Module ES, accueil uniquement : bras compagnon 3D (Three.js, calque fixe)
+    ├── vendor/three.module.min.js  # Three.js r160 minifié, hébergé en local (pas de CDN)
     ├── vendor/gsap.min.js       # GSAP 3.15 (moteur d'animation) — global `gsap`
     ├── vendor/ScrollTrigger.min.js # Plugin scroll GSAP — global `ScrollTrigger`
     ├── vendor/lenis.min.js      # Lenis 1.3 (smooth scroll inertiel) — global `Lenis`
@@ -38,8 +42,8 @@ Objectif du site : montrer l'étendue et la profondeur technique du profil, et d
 
 - **HTML dupliqué par page** : la nav et le footer sont écrits en dur dans chaque fichier (pas d'injection JS). Raison : robustesse, SEO, pas de flash de chargement. Si tu modifies la nav ou le footer, **répercute le changement dans les 3 fichiers**.
 - **CSS unique et partagé** : un seul `style.css`. Le design reste centralisé.
-- **JS** : `main.js` partagé sur les 3 pages (nav, scroll, reveal). Exception assumée : `hero3d.js`, module ES chargé **uniquement sur l'accueil** pour la couche WOW 3D — séparé pour ne pas charger Three.js (~1,2 Mo) sur les pages où il est inutile.
-- **Three.js hébergé en local** (`assets/vendor/three.module.js`) via import map, pas de CDN externe — robustesse et conformité « pas de dépendance build ».
+- **JS** : `main.js` partagé sur les 3 pages (nav, scroll, reveal). Exception assumée : `hero3d.js`, module ES chargé **uniquement sur l'accueil** pour la couche WOW 3D — séparé pour ne pas charger Three.js (~670 Ko) sur les pages où il est inutile.
+- **Three.js hébergé en local** (`assets/vendor/three.module.min.js`, build minifié officiel r160 du package npm, ~670 Ko) via import map, pas de CDN externe — robustesse et conformité « pas de dépendance build ».
 - **Librairies d'animation hébergées en local** (`assets/vendor/gsap.min.js`, `ScrollTrigger.min.js`, `lenis.min.js`) en builds UMD (globaux), chargées via `<script>` classiques **avant `main.js`** (ordre : gsap → ScrollTrigger → lenis → main.js). Pas de CDN, pas de build. `main.js` reste un script classique et consomme les globaux ; seul `hero3d.js` est un module ES. Voir le skill `scroll-motion` pour l'intégration Lenis↔ScrollTrigger.
 - **Navigation** : nav fixe identique partout. Depuis les pages détail, les liens pointent vers `index.html#section`. La page active porte la classe `.active`.
 
@@ -78,16 +82,24 @@ Stack : **GSAP + ScrollTrigger + Lenis** (smooth scroll inertiel), vendorisés e
 Principes (garde-fous, cf. skill `scroll-motion`) :
 - **Un effet = une intention** : chaque animation doit révéler ou hiérarchiser un contenu. Si on ne sait pas dire ce qu'elle apporte, on ne la met pas.
 - **Lisibilité en 30 s** : un recruteur (y compris Thales/Alstom/Siemens) doit tout comprendre même en scrollant vite. Le contenu reste lisible sans JS (ne jamais masquer en CSS de base).
-- **Perf** : animer uniquement `transform`/`opacity`. Attention : le hero charge déjà Three.js (~1,2 Mo).
+- **Perf** : animer uniquement `transform`/`opacity`. Attention : le hero charge déjà Three.js (~670 Ko minifié).
 - **Accessibilité** : `prefers-reduced-motion` → pas de Lenis, révélations en état final immédiat (même logique que le hero 3D).
 - **Sobriété** : un seul « moment fort » pinné sur tout le site, parallaxe subtile (5–15 %), pas de curseur custom ni de transitions plein écran gratuites.
+
+> **Décision du 2026-07-24 (conseil 4 agents : Kenji/Léa/Sara/Élise, tranché par Enzo) : « bras compagnon » (Concept B).** La couche 3D de l'accueil est un **calque fixe** derrière tout le contenu (`.hero-3d` en `position:fixed`, z-index 0, contenu en z-index ≥ 1) : le bras reste dans la **gouttière droite** et suit une chorégraphie de poses clés amortie par lerp (jamais de scrub 1:1) sur la progression du document. Garde-fous actés : **estompé (opacité ~0.35) sur les grilles Projets/Compétences**, **quasi figé pendant le manifeste pinné** (le moment fort reste le texte), voile ~0.6 ailleurs, rendu à la demande (pleine cadence au scroll, ~20 fps au repos), puce = hero uniquement. Le plein cadre derrière le texte a été **rejeté à l'unanimité** (contraste/crédibilité). Position d'Élise (minoritaire, consignée) : pas de 3D persistante du tout — si un recruteur grand groupe tique, revenir à la 3D hero-seule est un simple retour de `.hero-3d` en `absolute` dans le header.
+>
+> **v2.2 « cellule ancrée » : implémentée puis RETIRÉE (décision d'Enzo du 2026-07-24).** Le rail linéaire « 7e axe », l'ombre de contact, les câbles-gaines et les matériaux contrastés avaient été ajoutés suite au débat orchestré Kenji/Marc/Sara/Élise/Léa ; après visualisation, Enzo a tranché pour **revenir à la v2.1** (bras flottant + pick-and-place, sans habillage de cellule). Le code v2.2 a été retiré de `hero3d.js` (retour du groupe `root` directement dans la scène, matériaux d'origine). Ne pas réintroduire le rail ou l'habillage sans demande explicite d'Enzo.
+>
+> **Ajout v2.1 (même jour, après test d'Enzo : « mouvements plus importants ») : séquence pick-and-place.** Le bras va chercher un **cube orange** posé sur un socle (prise à ~30 % du scroll), le transporte en pivotant, et le **dépose sur un second socle** (~70 %), puis revient au repos. Implémentation dans `hero3d.js` : **IK 2 axes analytique** (épaule/coude + orientation d'outil imposée, deux branches de coude — « surplomb » pour les saisies par le dessus, branche de repos pour la pose d'accueil), résolue **une fois par clé à l'init** puis interpolation d'angles smoothstep + amortissement. Le cube est aimanté au point d'outil (`toolTip`) pendant la fenêtre de tenue (p ∈ [0.36, 0.73]), sinon il rejoint son socle par lerp — séquence entièrement réversible au scroll inverse. Les cibles de prise sont définies en coordonnées plan (`PICK`/`PLACE`) : les socles sont **construits sous les cibles**, donc la prise est exacte par construction, sans réglage visuel.
 
 ## Contenu — informations validées (source de vérité)
 
 ### Identité
 - Nom : Enzo Lorandi
-- Accroche : "Robotique · IA · Sciences du numérique" (à retravailler pour être le plus générique possible, le cv sert à ciblé la personne, le portefolio a pour objectif de montrer mon profil complet et faire un effet WOW)
-- Positionnement affiché : « Ingénieur ETI (CPE Lyon) - du capteur à l'IA ». Pas d'objectif de recherche affiché (cf. décision du 2026-07-23 en tête de fichier).
+- Accroche : "Robotique · Électronique · IA appliquée" (actée le 2026-07-24, conseil Nina/Élise : « Sciences du numérique » était vague et ne renvoyait à aucun bloc de compétences. Alternative consignée si Enzo préfère : la liste canonique à 4 items « Électronique · Systèmes embarqués · Robotique · IA appliquée », déjà utilisée en meta/contact, à vérifier en layout mobile)
+- Positionnement affiché : « Ingénieur CPE Lyon - du capteur à l'IA ». Pas d'objectif de recherche affiché (cf. décision du 2026-07-23 en tête de fichier).
+- **Décision du 2026-07-24 (audit contenu Nina/Élise/Sara, tranché par Enzo) : le sigle « ETI » est retiré de tout le site** (hero, intro Profil, footers, meta/og, JSON-LD, README). Raison (vérifiée par Élise) : un recruteur qui google « ETI » trouve « Entreprise de Taille Intermédiaire » (INSEE) - le sigle crée une fausse piste. **Unique exception** : la ligne diplôme de la timeline (`experiences.html`, « Diplôme d'Ingénieur - Filière ETI (Électronique, Télécommunications et Informatique)... ») où c'est le nom officiel vérifiable, auto-défini entre parenthèses. Footer partagé : « CPE Lyon · Robotique & IA appliquée ».
+- **Règle éditoriale « preuve avant slogan »** (même audit) : toute mention de « progresser / apprendre / optimiser » doit être immédiatement adossée à une preuve nommée (7 projets, 5 domaines, choix d'architecture documentés). Jamais de « passionné », « curieux », « polyvalent » à nu.
 
 ### Expérience (page experiences, timeline du + récent au + ancien)
 1. **RATP** (Mars–Sept 2026) — Coordinateur Technique Systèmes, via IKOS Consulting. Implémentation du MF19, lignes 3bis/7bis/10. Interfacage entre les différents MOE : Signalisation, traction, voie, GC, BT, PAE... et les exploitants: maintenance des train et exploitation classique. NB : mettre RATP en avant, IKOS en sous-ligne.
@@ -122,13 +134,18 @@ Contenu décodé et prêt (amélioration de captations audio de concerts : modul
 3. **Robot Doseur** (équipe de 3) — Préparateur de boissons (température/concentration/volume contrôlés). **Catégorisation actée par Enzo : électronique analogique / instrumentation, PAS « mécatronique »** — son périmètre est la chaîne de mesure analogique (conditionnement, NE555, pont de mesure) et la puissance, pas la conception mécanique.
    Rôle d'Enzo : mesure température (capteur + conditionnement), concentration (NE555 + photodiode), volume (pont de mesure), MLI/pont en H, électrovannes, résistance de chauffage. (Pas l'IHM.)
 
-### Compétences (6 domaines)
-- **Robotique** : ROS2 (avancé, projets mobilité), Gazebo, cinématique inverse
-- **Développement** : Python, C/C++, JavaScript, HTML/CSS, PHP, Git/GitLab, déploiement
-- **IA appliquée** : principaux modèles du marché, Claude Code, prompt engineering, neurorobotique, learning from networks
-- **Hardware** : STM32 (HAL/CubeMX), Raspberry Pi, Arduino ; SPI/I2C/UART/CAN ; capteurs (IR, RFID/NFC, température, optiques, inductifs, magnétiques, encodeurs) ; actionneurs (moteurs DC, pont en H, PWM, servos, pas-à-pas, électrovannes, relais, transistors de puissance) ; électronique analogique (conditionnement, AOP, NE555, filtrage) ; électronique numérique ; instrumentation (oscillo, multimètre, soudure)
-- **Conception** : impression 3D
-- **Langues** : Français (natif), Anglais (C1), Italien (notions)
+### Compétences (6 blocs - restructuration actée le 2026-07-24, audit Nina/Élise/Sara + ajouts Enzo)
+Ordre affiché = différenciation décroissante : **Robotique → Hardware → IA appliquée → Développement → Soft skills → Langues**. Le bloc « Conception » a été fusionné dans Hardware (« Impression 3D » en fin de bloc) - ne pas le recréer sans nouvelle compétence CAO confirmée par Enzo.
+- **Robotique** : ROS2 (accent, **sans** niveau « avancé » - la preuve = les 3 projets ROS, pas une auto-note), MoveIt! 2, Gazebo, TF2, cinématique inverse, perception LiDAR
+- **Hardware** (le bloc le plus différenciant, 2 accents) : STM32 (accent), VHDL/FPGA (accent), Raspberry Pi, Arduino ; SPI/I2C/UART/CAN ; capteurs & actionneurs ; électronique analogique ; traitement du signal ; impression 3D. Détail des capteurs/actionneurs maîtrisés (source CV) : IR, RFID/NFC, température, optiques, inductifs, magnétiques, encodeurs ; moteurs DC, pont en H, PWM, servos, pas-à-pas, électrovannes, relais, transistors de puissance ; conditionnement, AOP, NE555, filtrage ; instrumentation (oscillo, multimètre, soudure)
+- **IA appliquée** : LLM (accent), Claude Code, prompt engineering, neurorobotique, learning from networks
+- **Développement** (volontairement SANS accent - bloc « support » qui montre la largeur) : Python, C/C++, JavaScript, HTML/CSS, PHP, Linux, Git/GitLab, déploiement
+- **Soft skills** (ajout demandé par Enzo le 2026-07-24, cadré par une recherche marché : adaptabilité/communication/capacité d'apprentissage/esprit critique = top des attentes recruteurs 2026). Actuelles : Apprentissage rapide · Adaptabilité · Communication multi-équipes · Esprit critique. **Affichées sans ancrage entre parenthèses** : les preuves initialement affichées (7 projets, Italie/RATP, choix d'architecture...) ont été retirées le 2026-07-24 sur décision d'Enzo - les pills restent courtes, les preuves sont dans les sections Projets/Expérience du site. La sélection des 4 skills reste, elle, adossée à des preuves réelles : ne pas en ajouter une nouvelle sans preuve nommée quelque part sur le site. « Curiosité » du brief d'Enzo volontairement absorbée dans « Apprentissage rapide » (trop générique seule).
+- **Langues** : Français (natif), Anglais (C1). L'italien (notions) a été retiré le 2026-07-24 à la demande d'Enzo.
+
+**Pills accent cliquables (pont compétence → preuve)** : les 4 accents de la section sont des liens vers le projet qui les prouve - ROS2→`projets.html#turtlebot`, STM32→`#lockwise`, VHDL/FPGA→`#chronoscore`, LLM→`#robonbon`. Réservé aux accents, jamais aux pills neutres (le signal doit rester rare).
+
+**Règle des pills accent sur les projets et la timeline (actée)** : l'accent = la compétence la plus spécifique et différenciante que CE projet prouve - jamais un doublon du tag `//` de catégorie, jamais un langage générique. Application : LockWise→STM32F303, BCI→ROS-Neuro, TurtleBot→ROS 2 Humble, UR5→MoveIt! 2, Robonbon→LLM, Doseur→NE555, ChronoScore→VHDL ; timeline : RATP→Signalisation (harmonisé sur les 2 pages), Padoue→Neurorobotique, CPE→Robotique de service.
 
 ### À compléter par Enzo (placeholders dans le code)
 **Traitement « planche technique » (procédé acté sur le Robot Doseur)** : quand la seule source disponible est un schéma sur fond blanc, ne pas le coller tel quel (pavé blanc qui jure sur le dark cyber) et ne pas l'agrandir (flou). Le bon procédé : extraire les figures à leur **résolution native**, les transposer en **blanc-sur-sombre** (luminance inversée, puis interpolation entre `--surface-2` et `--text`, avec un gamma par figure selon que le tracé est imprimé, au stylo ou au crayon), et les **composer côte à côte** sur un canevas `--surface-2`. Le fond de la figure devient exactement la couleur du canevas : aucune couture visible, et le résultat s'intègre à la charte. Voir `assets/img/doseur.jpg` (1128x240, 42 Ko) pour le résultat.
@@ -193,7 +210,22 @@ Markup à coller dans le `.pd-media` du projet concerné (`projets.html`) :
 - [x] **Couche WOW scroll v1** : smooth scroll Lenis + révélations organiques au scroll (piliers, cartes, skills, timeline) + moment fort pinné sur le manifeste — implémenté dans `main.js`
 - [x] **Photo de profil réelle** — `assets/img/enzo-lorandi.jpg` (560x560, 23 Ko), dérivée recadrée de l'original `LORANDI-Enzo.jpg` (4083x3860, 750 Ko) conservé au dépôt. Toute nouvelle photo doit être redimensionnée : le hero est au-dessus de la ligne de flottaison.
 - [ ] Photos réelles des 3 projets (actuellement placeholders SVG dans `index.html` et `projets.html`)
-- [ ] **Minifier Three.js** — `assets/vendor/three.module.js` est le build **non minifié** de r160 (1,29 Mo, ~85 % du JS du site). Le build minifié officiel (`three.module.min.js`, ~670 Ko) diviserait le coût de parsing par deux. Nécessite l'accord d'Enzo sur la source de téléchargement (npm/unpkg/GitHub releases).
+- [x] **Minifier Three.js** — remplacé le 2026-07-24 par le build minifié officiel du package npm `three@0.160.1` (`three.module.min.js`, 670 Ko, téléchargé via unpkg avec l'accord d'Enzo). L'ancien build non minifié (1,29 Mo) est supprimé du dépôt (récupérable via git).
+- [x] **Couche WOW scroll v2 : « bras compagnon » (Concept B)** — implémentée le 2026-07-24 (cf. décision en section Motion). `#hero3d` sorti du header en calque fixe, chorégraphie de poses clés amortie sur la progression du document, fenêtres de lisibilité par section, rendu à la demande, puce cantonnée au hero. Réglages Kenji au passage : puce qui respire (0,6 rad/s, émissif 1,0→1,9) au lieu de clignoter, idle du bras apaisé (0,03 rad @ 0,15). Testée par Enzo en navigateur : validée dans l'idée → a demandé des mouvements plus amples, d'où la v2.1.
+- [x] **Couche WOW scroll v2.1 : pick-and-place** (cf. note en section Motion) — le bras saisit un cube sur un socle et le dépose sur un second au fil du scroll, IK 2 axes analytique résolue par clé, cube aimanté au point d'outil pendant la tenue. Mouvement validé visuellement par Enzo en navigateur.
+- [x] ~~Couche WOW scroll v2.2 : cellule ancrée~~ — **retirée** le 2026-07-24 après visualisation par Enzo (cf. note en section Motion). Le site reste sur la v2.1.
+- [x] **Corrections d'audit UX (conseil du 2026-07-24)** — pin du manifeste réduit à 75 % (au lieu de 120 %), sommaire ancré `.project-toc` sur `projets.html`, `aria-expanded` togglé sur le burger (3 pages), fix superposition boutons hero / scroll-hint sur mobile (photo réduite, réserve basse, scroll-hint masqué sous 620 px de haut).
+- [x] **Lot d'améliorations du conseil (2026-07-24, 7 audits sous-agents + analyse ui-ux-pro-max, accepté par Enzo)** :
+  - **Matière 3D (Kenji)** : tone mapping ACES (exposure 1.1), environment map procédurale PMREM (3 panneaux HDR : key chaud / fill froid / rebond orange, `envMapIntensity` 0.3-0.6 pour rester sobre), fog couleur `--bg` (11→20), doigts de pince en accent adouci (émissif 0.25 - le point focal reste le cube), bandes d'accent du bras qui respirent au rythme de la puce, « beat » lumineux du cube à la prise/lâcher. **Non vérifié visuellement - à valider par Enzo en navigateur.** Réglages en réserve (Kenji, non appliqués) : `DAMP` 0.08→0.11 si le bras traîne, clé d'anticipation avant la levée.
+  - **Robustesse (Léa)** : scroll nav en `{passive:true}`, listener `load` de hero3d protégé par `readyState` (Three.js peut arriver après `load`), gestion `webglcontextlost/restored` (coupure propre par le fondu CSS), `modulepreload` de Three.js.
+  - **A11y / conformité** : `scroll-behavior: smooth` conditionné à `prefers-reduced-motion`, `h4`→`h3` sur les fiches projets, `aria-current` (statique + JS), `theme-color`, variables `--halo-glow/--grid-line/--bg-overlay`, icônes contact en SVG (enveloppe + LinkedIn officiel), styles inline rapatriés en classes, letter-spacing boutons, `.pill-accent` renforcée, glow hover `.skill-block`.
+  - **Contenu (Nina)** : accroche hero (cf. Identité), « Ingénieur en formation » → « Ingénieur ETI **formé** à CPE Lyon » (variante prudente : le stage RATP valide le diplôme, donc pas « diplômé » avant sa fin - **passer à « diplômé » sur confirmation d'Enzo à partir d'octobre 2026**), pills HTML/CSS + PHP ajoutées, sous-titres sur LockWise/Robonbon/Doseur, « Système mécatronique » → « Système automatisé » (Doseur), meta description experiences dé-étudiantisée.
+  - **UX (Sara) / conversion (Élise)** : CTA de fin de page sur projets et experiences (`.page-cta`), chip actif du sommaire projets (IntersectionObserver), lien « ↑ Sommaire » en pied des 7 fiches, badge « Individuel / Équipe de N » sur les cartes de l'accueil (`.card-topline`/`.card-crew`).
+  - **Fondations (Tom)** : `404.html` en charte, `robots.txt` + `sitemap.xml`, JSON-LD `schema.org/Person` (sans notion de recherche/disponibilité, conforme à la décision du 2026-07-23), `README.md`, `.nojekyll`, polices auto-hébergées (cf. Stack).
+  - **Écarté sciemment** : animation CSS des piliers proposée par Marc (doublon avec les révélations GSAP), ancrage CSS bas-droite du hero (Kenji I9, à débattre), resserrement des paragraphes 720→640px.
+- [x] **Audit final contenu (2026-07-24, Nina/Élise/Sara, validé par Enzo)** : retrait d'« ETI » partout sauf ligne diplôme timeline (cf. Identité), intro Profil et pilier 3 reformulés « preuve avant slogan » (« Sept projets, cinq domaines... », « comprendre la chaîne complète avant de l'optimiser »), grille Compétences restructurée en 5 blocs avec accents cliquables (cf. Compétences), règle des pills accent appliquée aux 7 projets + timeline (Robonbon Python→LLM, Doseur→NE555 + pill « Pont de mesure », BCI MATLAB→ROS-Neuro, RATP harmonisé sur « Signalisation »), ligne de chips des 7 domaines en tête de la section Projets de l'accueil, fichiers agents Nina/Élise purgés des mentions ETI/PFE obsolètes.
+- [ ] **CV PDF téléchargeable** (reco n°1 d'Élise, filtre grand groupe : la RH transfère une pièce jointe, pas un lien) - en attente du fichier fourni par Enzo, puis lien dans le hero ou la nav.
+- [ ] Photo réelle de la carte FPGA allumée (ChronoScore) - remplace l'illustration procédurale.
 - [ ] **Couche WOW v2 (optionnelle, en pause)** : photo détourée d'Enzo en fond, bras robotique « posé » dans une main + réseau de neurones dans l'autre. Idée mise de côté au profit de la puce seule, mais la hiérarchie de pivots du bras reste prête pour un repositionnement dans une main si l'idée est reprise.
 - [ ] Liens GitLab / GitHub (non prioritaire)
 

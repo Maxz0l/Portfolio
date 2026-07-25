@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0f">
 <title>Parcours - Enzo Lorandi</title>
-<meta name="description" content="Le parcours d'Enzo Lorandi : RATP, Università di Padova, CPE Lyon. Formation d'ingénieur en robotique.">
+<meta name="description" content="Le parcours d'Enzo Lorandi : RATP, Università di Padova, CPE Lyon. Ingénieur spécialisé en robotique de service.">
 <link rel="canonical" href="https://maxz0l.github.io/Portfolio/experiences.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Parcours - Enzo Lorandi">
@@ -18,9 +19,9 @@
 <meta name="twitter:title" content="Parcours - Enzo Lorandi">
 <meta name="twitter:description" content="De CPE Lyon à la RATP, en passant par l'Università di Padova - un parcours construit autour de la robotique, des systèmes et de l'IA.">
 <meta name="twitter:image" content="https://maxz0l.github.io/Portfolio/assets/img/og-image.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/space-grotesk-700-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -33,11 +34,11 @@
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html#profil">Profil</a></li>
     <li><a href="projets.html">Projets</a></li>
-    <li><a href="experiences.html" class="active">Expérience</a></li>
+    <li><a href="experiences.html" class="active" aria-current="page">Expérience</a></li>
     <li><a href="index.html#competences">Compétences</a></li>
     <li><a href="index.html#contact" class="nav-cta">Contact</a></li>
   </ul>
-  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
 </nav>
 
 <header class="page-header" id="main">
@@ -48,7 +49,7 @@
   </div>
 </header>
 
-<main class="container" style="padding-bottom: var(--s7);">
+<main class="container page-main">
   <div class="timeline">
 
     <div class="tl-item">
@@ -58,8 +59,8 @@
       <div class="tl-org">Coordinateur Technique Systèmes · via IKOS Consulting · Paris</div>
       <p>Coordination de l'implémentation du MF19 (nouveau matériel roulant) au sein de l'équipe RMOE. Périmètre systèmes : signalisation, traction, interfaces voie/GC, et coordination avec les exploitants de maintenance et de service. Interface technique entre les équipes dans un environnement industriel réglementé et en exploitation continue.</p>
       <div class="tag-row">
-        <span class="pill-accent">Systèmes ferroviaires</span>
-        <span class="pill">Signalisation</span>
+        <span class="pill-accent">Signalisation</span>
+        <span class="pill">Systèmes ferroviaires</span>
         <span class="pill">Traction</span>
         <span class="pill">Coordination multi-équipes</span>
       </div>
@@ -92,12 +93,18 @@
     </div>
 
   </div>
+
+  <div class="page-cta">
+    <p>La suite concrète de ce parcours se lit dans les projets.</p>
+    <a href="projets.html" class="btn-ghost">Voir mes projets</a>
+    <a href="index.html#contact" class="btn-primary">Me contacter</a>
+  </div>
 </main>
 
 <footer class="footer">
   <div class="container">
     <span>© 2026 Enzo Lorandi</span>
-    <span>Ingénieur ETI · CPE Lyon</span>
+    <span>CPE Lyon · Robotique & IA appliquée</span>
   </div>
 </footer>
 

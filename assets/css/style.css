@@ -28,11 +28,22 @@
   --nav-h: 68px;
   --maxw: 1080px;
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* teintes dérivées des halos/voiles (une seule source de vérité) */
+  --halo-glow: rgba(255, 140, 26, 0.07);
+  --halo-glow-dim: rgba(255, 140, 26, 0.045);
+  --grid-line: rgba(255, 140, 26, 0.035);
+  --bg-overlay: rgba(10, 10, 15, 0.72);
 }
 
 /* ---------- RESET ---------- */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
+html { scroll-padding-top: var(--nav-h); }
+/* le smooth scroll natif est un mouvement comme un autre : pas pour ceux qui
+   demandent un mouvement réduit (Lenis est déjà coupé dans ce cas) */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
 body {
   background: var(--bg);
   color: var(--text);
@@ -47,8 +58,8 @@ body::after {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(620px circle at 82% 8%, rgba(255, 140, 26, 0.07), transparent 60%),
-    radial-gradient(720px circle at 8% 96%, rgba(255, 140, 26, 0.045), transparent 60%);
+    radial-gradient(620px circle at 82% 8%, var(--halo-glow), transparent 60%),
+    radial-gradient(720px circle at 8% 96%, var(--halo-glow-dim), transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
@@ -63,7 +74,6 @@ img { max-width: 100%; display: block; }
   border-radius: var(--radius-sm);
 }
 .nav-cta:focus-visible { outline-offset: 2px; }
-.tl-dot:focus-visible, .ci-icon:focus-visible { outline-offset: 4px; }
 
 .skip-link {
   position: absolute;
@@ -71,7 +81,7 @@ img { max-width: 100%; display: block; }
   z-index: 200;
   background: var(--accent);
   color: var(--bg);
-  padding: 10px 20px;
+  padding: var(--s1) var(--s2);
   border-radius: var(--radius-sm);
   font-family: var(--font-title);
   font-weight: 600;
@@ -98,8 +108,8 @@ body::before {
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 140, 26, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 140, 26, 0.035) 1px, transparent 1px);
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
   background-size: 48px 48px;
   pointer-events: none;
   z-index: 0;
@@ -193,6 +203,7 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
   font-family: var(--font-title);
   font-weight: 600;
   font-size: 14px;
+  letter-spacing: 0.03em;
   border: none;
   cursor: pointer;
   transition: all var(--transition);
@@ -208,6 +219,7 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
   font-family: var(--font-title);
   font-weight: 500;
   font-size: 14px;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: all var(--transition);
 }
@@ -233,7 +245,11 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
   border: 1px solid var(--border);
   color: var(--text-muted);
 }
-.pill-accent { background: var(--accent-dim); border-color: rgba(255, 140, 26, 0.25); color: var(--accent-light); }
+.pill-accent { background: var(--accent-dim); border-color: rgba(255, 140, 26, 0.35); color: var(--accent-light); }
+/* pill-accent cliquable : pont « compétence -> projet qui la prouve »
+   (réservé aux accents, jamais aux 30 pills : le signal reste rare) */
+a.pill-accent { transition: color var(--transition), border-color var(--transition); }
+a.pill-accent:hover, a.pill-accent:focus-visible { color: var(--accent); border-color: var(--accent); }
 .tag-row { display: flex; gap: var(--s1); flex-wrap: wrap; }
 
 /* =========================================================
@@ -241,6 +257,7 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
    ========================================================= */
 .hero {
   min-height: 100vh;
+  min-height: 100svh; /* mobile : hauteur visible réelle (barre d'adresse déduite) */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -266,11 +283,14 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
 @media (prefers-reduced-motion: reduce) {
   .hero-glow { animation: none; }
 }
-/* couche 3D (bras robotique) — derrière le contenu, au-dessus du glow */
+/* couche 3D (bras compagnon) — calque FIXE derrière tout le contenu.
+   Le contenu vit en z-index >= 1 (.container, .section, .manifesto, .footer) ;
+   la lisibilité au fil du scroll est gérée en JS (opacité du canvas modulée
+   par section : pleine sur le hero, estompée sur les grilles denses). */
 .hero-3d {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 0;
   pointer-events: none;
   opacity: 0;
   transition: opacity 1.2s ease;
@@ -382,6 +402,9 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
 .card-media .ph svg { opacity: 0.4; }
 .card-body { padding: var(--s3); display: flex; flex-direction: column; flex: 1; }
 .card-body .tag { font-family: var(--font-mono); font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+/* ligne haute de carte : domaine à gauche, taille d'équipe à droite */
+.card-topline { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s2); }
+.card-crew { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); white-space: nowrap; }
 .card-body h3 { font-size: 22px; font-weight: 600; margin: var(--s1) 0 var(--s2); }
 .card-body p { font-size: 14px; color: var(--text-muted); margin-bottom: var(--s3); flex: 1; }
 .card-body .btn-link { margin-top: auto; }
@@ -400,6 +423,7 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
 .xp-preview h3 { font-size: 26px; font-weight: 600; margin-bottom: var(--s1); }
 .xp-preview .meta { font-size: 14px; color: var(--text-muted); margin-bottom: var(--s3); }
 .xp-preview p { color: var(--text-muted); max-width: 720px; margin-bottom: var(--s3); }
+.xp-preview .tag-row { margin-bottom: var(--s3); }
 
 /* ---------- COMPÉTENCES (index) ---------- */
 .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s3); }
@@ -410,7 +434,7 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
   padding: var(--s3) var(--s4);
   transition: all var(--transition);
 }
-.skill-block:hover { border-color: var(--border-hover); }
+.skill-block:hover { border-color: var(--border-hover); box-shadow: 0 0 20px rgba(255, 140, 26, 0.08); }
 .skill-block h3 { font-size: 16px; font-weight: 600; margin-bottom: var(--s2); display: flex; align-items: center; gap: 8px; }
 .skill-block h3 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
 
@@ -447,6 +471,31 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
 .page-header { padding: calc(var(--nav-h) + var(--s6)) 0 var(--s5); }
 .page-header h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 700; margin-bottom: var(--s2); }
 .page-header p { font-size: 18px; color: var(--text-muted); max-width: 640px; }
+
+/* ---------- Sommaire ancré des projets (projets.html)
+   + ligne des domaines couverts (accueil, section Projets) ---------- */
+.project-toc { display: flex; gap: var(--s1); flex-wrap: wrap; margin-top: var(--s3); }
+/* sur l'accueil : resserré sous le h2, avant la grille des cartes */
+#projets .project-toc { margin: calc(-1 * var(--s3)) 0 var(--s4); }
+.toc-chip {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 6px 13px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--transition), border-color var(--transition);
+}
+.toc-chip:hover, .toc-chip:focus-visible,
+.toc-chip.active {
+  color: var(--accent-light);
+  border-color: var(--border-hover);
+}
+
+/* rangée de liens en pied de fiche projet (code + retour sommaire) */
+.pd-links { display: flex; gap: var(--s4); flex-wrap: wrap; }
 
 /* ---------- TIMELINE (experiences) ---------- */
 .timeline { position: relative; padding-left: var(--s5); }
@@ -487,7 +536,7 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
 .pd-body h2 { font-size: 32px; font-weight: 600; margin: var(--s1) 0; }
 .pd-tagline { font-size: 17px; color: var(--text); margin-bottom: var(--s3); }
 .pd-section { margin-bottom: var(--s3); }
-.pd-section h4 { font-family: var(--font-mono); font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--s1); }
+.pd-section h3 { font-family: var(--font-mono); font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--s1); font-weight: 500; }
 .pd-section p { color: var(--text-muted); }
 .pd-role-list { display: flex; flex-direction: column; gap: 6px; }
 .pd-role-list li { color: var(--text-muted); padding-left: 18px; position: relative; }
@@ -527,7 +576,7 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
   height: 64px;
   border-radius: 50%;
   border: 2px solid var(--accent);
-  background: rgba(10, 10, 15, 0.72);
+  background: var(--bg-overlay);
   color: var(--accent);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -548,6 +597,14 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
   letter-spacing: 0.05em;
 }
 .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* ---------- CTA de fin de page (projets / experiences) ---------- */
+/* Referme le « cul-de-sac » : l'intérêt est maximal en bas de page,
+   on y remet une sortie vers le contact au lieu du seul footer. */
+.page-main { padding-bottom: var(--s7); }
+.page-cta { text-align: center; padding-top: var(--s6); }
+.page-cta p { color: var(--text-muted); margin-bottom: var(--s3); }
+.page-cta .btn-primary, .page-cta .btn-ghost { margin: 0 var(--s1) var(--s1); }
 
 /* ---------- FOOTER (partagé) ---------- */
 .footer { border-top: 1px solid var(--border); padding: var(--s4) 0; position: relative; z-index: 1; }
@@ -577,4 +634,22 @@ h1, h2, h3 { font-family: var(--font-title); letter-spacing: -0.02em; line-heigh
   .container { padding: 0 var(--s3); }
   .section { padding: var(--s6) 0; }
   .xp-preview, .pd-body { padding: var(--s4); }
+  /* Rythme vertical resserré sur mobile : la photo pleine taille (180px min)
+     et les marges du hero faisaient déborder le contenu sous le scroll-hint
+     dès qu'on passait à deux boutons empilés. */
+  .hero-photo { width: clamp(132px, 34vw, 180px); height: clamp(132px, 34vw, 180px); margin-bottom: var(--s3); }
+  .hero h1 { margin-bottom: var(--s1); }
+  .hero .objective { margin-bottom: var(--s3); }
+}
+
+/* Le scroll-hint occupe ~87px depuis le bas du hero : sur mobile et
+   fenêtres basses, on lui réserve cette zone (contenu centré remonté)
+   pour que les boutons empilés ne viennent jamais se superposer dessus. */
+@media (max-width: 860px), (max-height: 760px) {
+  .hero { padding-bottom: calc(var(--s7) + var(--s2)); }
+}
+/* Écran vraiment court : plus de place pour le repère décoratif, on le retire
+   plutôt que de comprimer le contenu utile. */
+@media (max-height: 620px) {
+  .scroll-hint { display: none; }
 }

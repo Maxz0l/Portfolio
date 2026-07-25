@@ -11,7 +11,7 @@
 const nav = document.getElementById('nav');
 if (nav && !nav.classList.contains('scrolled')) {
   const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
-  window.addEventListener('scroll', onScroll);
+  window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 }
 
@@ -20,13 +20,15 @@ const burger = document.getElementById('burger');
 const navLinks = document.getElementById('navLinks');
 if (burger && navLinks) {
   burger.addEventListener('click', () => {
-    burger.classList.toggle('open');
-    navLinks.classList.toggle('open');
+    const open = burger.classList.toggle('open');
+    navLinks.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', String(open));
   });
   navLinks.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => {
       burger.classList.remove('open');
       navLinks.classList.remove('open');
+      burger.setAttribute('aria-expanded', 'false');
     });
   });
 }
@@ -44,6 +46,8 @@ if (sections.length && navItems.length) {
           const isActive = a.getAttribute('href') === `#${id}`;
           if (!a.classList.contains('nav-cta')) {
             a.classList.toggle('active', isActive);
+            if (isActive) a.setAttribute('aria-current', 'true');
+            else a.removeAttribute('aria-current');
           }
         });
       }
@@ -51,6 +55,27 @@ if (sections.length && navItems.length) {
   }, { rootMargin: '-45% 0px -45% 0px' });
 
   sections.forEach(s => observer.observe(s));
+}
+
+// ---------- SOMMAIRE PROJETS : chip actif (projets.html) ----------
+// Même pattern que la nav de l'accueil : le chip du projet à l'écran s'allume.
+const tocChips = document.querySelectorAll('.project-toc a[href^="#"]');
+const projectDetails = document.querySelectorAll('.project-detail[id]');
+if (tocChips.length && projectDetails.length) {
+  const tocObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        tocChips.forEach(a => {
+          const isActive = a.getAttribute('href') === `#${id}`;
+          a.classList.toggle('active', isActive);
+          if (isActive) a.setAttribute('aria-current', 'true');
+          else a.removeAttribute('aria-current');
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -40% 0px' });
+  projectDetails.forEach(d => tocObserver.observe(d));
 }
 
 // ---------- VIDÉO DE DÉMO : façade cliquable -> iframe au clic ----------
@@ -99,7 +124,7 @@ document.querySelectorAll('.video-embed[data-video-id]').forEach((facade) => {
     '.section-label', '.section h2', '.piliers-intro',
     '.pilier', '.project-card', '.skill-block', '.xp-preview',
     '.tl-item', '.project-detail', '.contact-text', '.contact-item',
-    '.page-header h1', '.page-header p'
+    '.page-header h1', '.page-header p', '.page-cta'
   ].join(', ');
 
   const hasGSAP = window.gsap && window.ScrollTrigger;
@@ -190,7 +215,9 @@ document.querySelectorAll('.video-embed[data-video-id]').forEach((facade) => {
         scrollTrigger: {
           trigger: manifesto,
           start: 'top top',
-          end: '+=120%',
+          // 75% (et non 120%) : le moment fort reste, mais coûte moins de
+          // scroll juste avant la section Projets (friction relevée en audit UX)
+          end: '+=75%',
           pin: true,
           scrub: 0.5,
         },
